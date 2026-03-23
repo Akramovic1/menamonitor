@@ -73,24 +73,22 @@ import {
   ECONOMIC_CENTERS,
   AI_DATA_CENTERS,
   SITE_VARIANT,
+  STARTUP_HUBS,
+  ACCELERATORS,
+  TECH_HQS,
+  CLOUD_REGIONS,
   PORTS,
   SPACEPORTS,
   CRITICAL_MINERALS,
+  STOCK_EXCHANGES,
+  FINANCIAL_CENTERS,
+  CENTRAL_BANKS,
+  COMMODITY_HUBS,
   GULF_INVESTMENTS,
+  MINING_SITES,
+  PROCESSING_PLANTS,
+  COMMODITY_PORTS as COMMODITY_GEO_PORTS,
 } from '@/config';
-
-// Stubs for removed variant-specific config data (tech/finance/commodity)
-const STARTUP_HUBS: any[] = [];
-const ACCELERATORS: any[] = [];
-const TECH_HQS: any[] = [];
-const CLOUD_REGIONS: any[] = [];
-const STOCK_EXCHANGES: any[] = [];
-const FINANCIAL_CENTERS: any[] = [];
-const CENTRAL_BANKS: any[] = [];
-const COMMODITY_HUBS: any[] = [];
-const MINING_SITES: any[] = [];
-const PROCESSING_PLANTS: any[] = [];
-const COMMODITY_GEO_PORTS: any[] = [];
 import type { GulfInvestment } from '@/types';
 import { resolveTradeRouteSegments, TRADE_ROUTES as TRADE_ROUTES_LIST, type TradeRouteSegment } from '@/config/trade-routes';
 import { getLayersForVariant, resolveLayerLabel, bindLayerSearch, type MapVariant } from '@/config/map-layer-definitions';
@@ -1235,7 +1233,7 @@ export class DeckGLMap {
             _clusterId: f.properties.cluster_id!,
             lat: coords[1], lon: coords[0],
             count: clusterCount,
-            items: [] as any[],
+            items: [] as import('@/config/tech-geo').TechHQ[],
             city: String(props.city ?? ''),
             country: String(props.country ?? ''),
             primaryType,
@@ -4106,7 +4104,7 @@ export class DeckGLMap {
         <button class="map-btn zoom-out" title="${t('components.deckgl.zoomOut')}">-</button>
         <button class="map-btn zoom-reset" title="${t('components.deckgl.resetView')}">&#8962;</button>
       </div>
-      ${SITE_VARIANT === 'mena' ? '' : `<div class="view-selector">
+      <div class="view-selector">
         <select class="view-select">
           <option value="global">${t('components.deckgl.views.global')}</option>
           <option value="america">${t('components.deckgl.views.americas')}</option>
@@ -4117,7 +4115,7 @@ export class DeckGLMap {
           <option value="africa">${t('components.deckgl.views.africa')}</option>
           <option value="oceania">${t('components.deckgl.views.oceania')}</option>
         </select>
-      </div>`}
+      </div>
     `;
 
     this.container.appendChild(controls);
@@ -4204,12 +4202,10 @@ export class DeckGLMap {
       </div>
     `;
 
-    if (SITE_VARIANT !== 'mena') {
-      const authorBadge = document.createElement('div');
-      authorBadge.className = 'map-author-badge';
-      authorBadge.textContent = '© Elie Habib · Someone™';
-      toggles.appendChild(authorBadge);
-    }
+    const authorBadge = document.createElement('div');
+    authorBadge.className = 'map-author-badge';
+    authorBadge.textContent = '© Elie Habib · Someone™';
+    toggles.appendChild(authorBadge);
 
     this.container.appendChild(toggles);
 
