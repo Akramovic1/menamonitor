@@ -1,5 +1,6 @@
 import type { Feed, NewsItem } from '@/types';
 import { SITE_VARIANT } from '@/config';
+import { SOURCE_SIDES } from '@/config/feeds';
 import { chunkArray, fetchWithProxy } from '@/utils';
 import { classifyByKeyword, classifyWithAI } from './threat-classifier';
 import { inferGeoHubsFromTitle } from './geo-hub-index';
@@ -11,6 +12,7 @@ import { parseFeedDateOrNow } from './feed-date';
 import { canQueueAiClassification, AI_CLASSIFY_MAX_PER_FEED } from './ai-classify-queue';
 import { mlWorker } from './ml-worker';
 import { isHeadlineMemoryEnabled } from './ai-flow-settings';
+import { triggerConflictExtraction } from './conflict-extraction';
 
 const FEED_COOLDOWN_MS = 5 * 60 * 1000;
 const MAX_FAILURES = 2;
@@ -306,6 +308,17 @@ export async function fetchFeed(feed: Feed): Promise<NewsItem[]> {
           item.isAlert = aiResult.level === 'critical' || aiResult.level === 'high';
         }
       }).catch(() => { });
+    }
+
+    // MENA conflict extraction — fire-and-forget for relevant articles
+    if (SITE_VARIANT === 'mena' || SITE_VARIANT === 'middleeast') {
+      for (const item of parsed) {
+        const sourceSide = SOURCE_SIDES[item.source];
+        const isMenaRelevant = sourceSide !== undefined || item.threat.menaConflictType !== undefined;
+        if (isMenaRelevant && (item.threat.level === 'critical' || item.threat.level === 'high' || item.threat.level === 'medium')) {
+          triggerConflictExtraction(item.title, item.source, sourceSide).catch(() => {});
+        }
+      }
     }
 
     return parsed;

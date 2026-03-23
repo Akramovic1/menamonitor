@@ -63,6 +63,14 @@ interface CountryData {
 }
 
 export { TIER1_COUNTRIES } from '@/config/countries';
+import { SITE_VARIANT } from '@/config/variant';
+
+/** MENA-only countries for the mena variant CII display. */
+const MENA_CII_COUNTRIES = new Set([
+  'IR', 'IL', 'IQ', 'SY', 'LB', 'YE',
+  'SA', 'AE', 'QA', 'BH', 'KW', 'OM',
+  'JO', 'EG', 'TR', 'PK', 'AF',
+]);
 
 const LEARNING_DURATION_MS = 15 * 60 * 1000;
 let learningStartTime: number | null = null;
@@ -965,7 +973,12 @@ export function calculateCII(): CountryScore[] {
     previousScores.set(code, score);
   }
 
-  return scores.sort((a, b) => b.score - a.score);
+  const sorted = scores.sort((a, b) => b.score - a.score);
+  // For the mena variant, only show MENA region countries
+  if (SITE_VARIANT === 'mena') {
+    return sorted.filter(s => MENA_CII_COUNTRIES.has(s.code));
+  }
+  return sorted;
 }
 
 export function getTopUnstableCountries(limit = 10): CountryScore[] {

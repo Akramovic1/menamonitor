@@ -6,7 +6,7 @@
 import { isMobileDevice } from '@/utils';
 import { MapComponent } from './Map';
 import { DeckGLMap, type DeckMapView, type CountryClickPayload } from './DeckGLMap';
-import { GlobeMap } from './GlobeMap';
+// GlobeMap removed — MENA variant uses DeckGLMap only
 import type {
   MapLayers,
   Hotspot,
@@ -83,7 +83,7 @@ export class MapContainer {
   private isMobile: boolean;
   private deckGLMap: DeckGLMap | null = null;
   private svgMap: MapComponent | null = null;
-  private globeMap: GlobeMap | null = null;
+  private globeMap: any = null;
   private initialState: MapContainerState;
   private useDeckGL: boolean;
   private useGlobe: boolean;
@@ -186,9 +186,11 @@ export class MapContainer {
 
   private init(): void {
     if (this.useGlobe) {
-      console.log('[MapContainer] Initializing 3D globe (globe.gl mode)');
-      this.globeMap = new GlobeMap(this.container, this.initialState);
-    } else if (this.useDeckGL) {
+      console.log('[MapContainer] Globe mode not available in MENA variant, falling back to DeckGL');
+      this.useGlobe = false;
+      this.useDeckGL = true;
+    }
+    if (this.useDeckGL) {
       console.log('[MapContainer] Initializing deck.gl map (desktop mode)');
       try {
         this.container.classList.add('deckgl-mode');
@@ -215,19 +217,9 @@ export class MapContainer {
     }
   }
 
-  /** Switch to 3D globe mode at runtime (called from Settings). */
+  /** Switch to 3D globe mode at runtime — not available in MENA variant. */
   public switchToGlobe(): void {
-    if (this.useGlobe) return;
-    const snapshot = this.getState();
-    const center = this.getCenter();
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.destroyFlatMap();
-    this.useGlobe = true;
-    this.useDeckGL = false;
-    this.globeMap = new GlobeMap(this.container, this.initialState);
-    this.restoreViewport(snapshot, center);
-    this.rehydrateActiveMap();
+    console.warn('[MapContainer] Globe mode not available in MENA variant');
   }
 
   /** Reload basemap style (called when map provider changes in Settings). */
@@ -312,14 +304,6 @@ export class MapContainer {
     return this.useGlobe;
   }
 
-  private destroyFlatMap(): void {
-    this.deckGLMap?.destroy();
-    this.deckGLMap = null;
-    this.svgMap?.destroy();
-    this.svgMap = null;
-    this.container.innerHTML = '';
-    this.container.classList.remove('deckgl-mode', 'svg-mode');
-  }
 
   // ─── Unified public API - delegates to active map implementation ────────────
 

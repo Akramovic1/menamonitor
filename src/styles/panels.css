@@ -2408,3 +2408,214 @@
 .gb-priciest { background: rgba(239,68,68,0.1); color: #f87171; }
 .gb-total-row td { border-top: 2px solid rgba(255,255,255,0.2); }
 .gb-updated { font-size: 0.65rem; opacity: 0.4; text-align: right; padding: 4px 6px; }
+
+/* ----------------------------------------------------------
+   MENA Panels: Conflict Scorecard
+   ---------------------------------------------------------- */
+.scorecard-container { display: flex; flex-direction: column; gap: 12px; }
+.scorecard-sides { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; }
+.scorecard-divider { width: 1px; background: var(--border, rgba(255,255,255,0.1)); }
+.scorecard-side { display: flex; flex-direction: column; gap: 6px; }
+.scorecard-side-header { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.85rem; padding-bottom: 4px; border-bottom: 1px solid var(--border, rgba(255,255,255,0.1)); }
+.scorecard-flag { font-size: 1.1rem; }
+.scorecard-metric { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 0.75rem; }
+.scorecard-metric-label { opacity: 0.7; }
+.scorecard-metric-value { display: flex; align-items: center; gap: 4px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.scorecard-severity--high .scorecard-metric-value { color: var(--semantic-critical, #ff4444); }
+.scorecard-severity--medium .scorecard-metric-value { color: var(--semantic-elevated, #ffaa00); }
+.scorecard-severity--low .scorecard-metric-value { color: var(--semantic-normal, #44aa44); }
+.scorecard-trend { font-size: 0.7rem; }
+.scorecard-trend--up { color: var(--semantic-critical, #ff4444); }
+.scorecard-trend--down { color: var(--semantic-normal, #44aa44); }
+.scorecard-trend--stable { color: var(--text-secondary, #999); }
+.scorecard-shared { border-top: 1px solid var(--border, rgba(255,255,255,0.1)); padding-top: 8px; }
+.scorecard-shared-title { font-weight: 600; font-size: 0.8rem; margin-bottom: 6px; opacity: 0.8; }
+.scorecard-shared-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.scorecard-shared-item { display: flex; justify-content: space-between; font-size: 0.75rem; }
+.scorecard-shared-label { opacity: 0.7; }
+.scorecard-shared-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 768px) { .scorecard-sides { grid-template-columns: 1fr; } .scorecard-divider { display: none; } .scorecard-shared-grid { grid-template-columns: 1fr; } }
+
+/* ----------------------------------------------------------
+   MENA Panels: Two-Sided News
+   ---------------------------------------------------------- */
+.two-sided-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; height: 100%; }
+.two-sided-column { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 500px; }
+.two-sided-column-header { font-weight: 600; font-size: 0.8rem; padding: 4px 0; border-bottom: 1px solid var(--border, rgba(255,255,255,0.1)); position: sticky; top: 0; background: var(--panel-bg, #141414); z-index: 1; }
+.two-sided-article { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.two-sided-headline { font-size: 0.75rem; line-height: 1.3; display: block; color: var(--text-primary, #eee); text-decoration: none; }
+.two-sided-headline:hover { color: var(--accent, #fff); }
+.two-sided-meta { display: flex; align-items: center; gap: 4px; margin-top: 3px; font-size: 0.65rem; opacity: 0.7; }
+.two-sided-risk-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.two-sided-source { font-weight: 500; }
+.two-sided-tier { font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+.two-sided-tier--1 { background: rgba(34,197,94,0.2); color: #4ade80; }
+.two-sided-tier--2 { background: rgba(59,130,246,0.2); color: #60a5fa; }
+.two-sided-tier--3 { background: rgba(234,179,8,0.2); color: #facc15; }
+.two-sided-time { margin-left: auto; }
+.two-sided-tabs { display: flex; gap: 2px; margin-bottom: 8px; }
+.two-sided-tab { flex: 1; padding: 6px 4px; border: none; background: rgba(255,255,255,0.05); color: var(--text-secondary, #aaa); font-size: 0.7rem; cursor: pointer; border-radius: 4px 4px 0 0; }
+.two-sided-tab--active { background: rgba(255,255,255,0.15); color: var(--text-primary, #eee); font-weight: 600; }
+.two-sided-mobile { display: flex; flex-direction: column; }
+.two-sided-tab-content { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 400px; }
+@media (max-width: 768px) { .two-sided-columns { grid-template-columns: 1fr; } .two-sided-column { max-height: 300px; } }
+
+/* ----------------------------------------------------------
+   MENA Panels: Fact Check
+   ---------------------------------------------------------- */
+.factcheck-list { display: flex; flex-direction: column; gap: 8px; }
+.factcheck-claim { padding: 8px; border-radius: 4px; background: rgba(255,255,255,0.03); border-left: 3px solid transparent; }
+.factcheck-status--verified { border-left-color: var(--semantic-normal, #44aa44); }
+.factcheck-status--disputed { border-left-color: var(--semantic-elevated, #ffaa00); }
+.factcheck-status--unverified { border-left-color: var(--text-secondary, #999); }
+.factcheck-status--false { border-left-color: var(--semantic-critical, #ff4444); }
+.factcheck-claim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.factcheck-badge { font-size: 0.7rem; font-weight: 600; }
+.factcheck-confidence { font-size: 0.65rem; opacity: 0.6; font-variant-numeric: tabular-nums; }
+.factcheck-text { font-size: 0.75rem; line-height: 1.4; margin: 0; }
+.factcheck-source { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; margin-top: 4px; opacity: 0.7; }
+.factcheck-time { margin-left: auto; }
+.factcheck-verify { font-size: 0.65rem; margin-top: 4px; opacity: 0.7; }
+.factcheck-verify a { color: var(--accent, #60a5fa); text-decoration: none; }
+.factcheck-verify a:hover { text-decoration: underline; }
+.factcheck-fallback { text-align: center; padding: 24px 12px; }
+.factcheck-fallback-icon { font-size: 2rem; margin-bottom: 8px; }
+.factcheck-fallback-hint { font-size: 0.7rem; opacity: 0.5; margin-top: 8px; }
+.factcheck-reasoning { font-size: 0.65rem; margin-top: 4px; opacity: 0.6; font-style: italic; }
+
+/* ----------------------------------------------------------
+   MENA Panels: AI Conflict Analysis
+   ---------------------------------------------------------- */
+.ai-analysis-content { display: flex; flex-direction: column; gap: 10px; }
+.ai-analysis-risk { display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; }
+.ai-analysis-risk-badge { padding: 2px 10px; border-radius: 3px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; }
+.ai-analysis-risk-text { font-size: 0.72rem; line-height: 1.4; opacity: 0.85; }
+.ai-analysis-summary { border-left: 3px solid var(--accent, #60a5fa); padding: 8px 12px; background: rgba(96,165,250,0.05); border-radius: 0 4px 4px 0; }
+.ai-analysis-summary p { font-size: 0.78rem; line-height: 1.5; margin: 0; }
+.ai-analysis-section h4 { font-size: 0.7rem; font-weight: 600; margin: 0 0 4px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.04em; }
+.ai-analysis-list { margin: 0; padding-left: 18px; }
+.ai-analysis-list li { font-size: 0.73rem; line-height: 1.5; margin-bottom: 3px; }
+.ai-analysis-mood { font-size: 0.72rem; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 4px; }
+.ai-analysis-mood-label { font-weight: 600; opacity: 0.7; }
+.ai-analysis-mood em { opacity: 0.85; }
+.ai-analysis-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
+.ai-analysis-timestamp { font-size: 0.62rem; opacity: 0.5; }
+.ai-analysis-refresh-btn { background: none; border: 1px solid rgba(255,255,255,0.15); color: inherit; padding: 2px 8px; border-radius: 3px; font-size: 0.65rem; cursor: pointer; opacity: 0.7; }
+.ai-analysis-refresh-btn:hover { opacity: 1; border-color: var(--accent, #60a5fa); }
+.ai-analysis-fallback { text-align: center; padding: 24px 12px; }
+.ai-analysis-fallback-icon { font-size: 2rem; margin-bottom: 8px; }
+.ai-analysis-hint { font-size: 0.7rem; opacity: 0.5; margin-top: 8px; }
+
+/* ----------------------------------------------------------
+   MENA Panels: Missile Tracker
+   ---------------------------------------------------------- */
+.missile-container { display: flex; flex-direction: column; gap: 8px; }
+.missile-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--border, rgba(255,255,255,0.1)); }
+.missile-stat { text-align: center; }
+.missile-stat-value { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.missile-stat-label { font-size: 0.65rem; opacity: 0.6; }
+.missile-timeline { display: flex; flex-direction: column; gap: 6px; }
+.missile-event { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: default; }
+.missile-event-time { font-size: 0.6rem; opacity: 0.5; min-width: 60px; flex-shrink: 0; white-space: nowrap; padding-top: 2px; }
+.missile-event-body { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 0.75rem; }
+.missile-type { font-weight: 500; }
+.missile-route { opacity: 0.8; }
+.missile-result { font-weight: 600; }
+.missile-result--hit { color: var(--semantic-critical, #ff4444); }
+.missile-result--intercepted { color: var(--semantic-normal, #44aa44); }
+.missile-result--failed { color: var(--text-secondary, #999); }
+
+/* ----------------------------------------------------------
+   MENA Panels: Alliance Tracker
+   ---------------------------------------------------------- */
+.alliance-container { display: flex; flex-direction: column; gap: 12px; }
+.alliance-section { }
+.alliance-section-header { font-weight: 600; font-size: 0.8rem; padding: 4px 0; margin-bottom: 6px; border-bottom: 1px solid var(--border, rgba(255,255,255,0.1)); }
+.alliance-section--iran .alliance-section-header { border-bottom-color: rgba(255,68,68,0.3); }
+.alliance-section--neutral .alliance-section-header { border-bottom-color: rgba(255,255,255,0.2); }
+.alliance-section--israel .alliance-section-header { border-bottom-color: rgba(51,136,255,0.3); }
+.alliance-section-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+.alliance-card { background: rgba(255,255,255,0.03); border-radius: 4px; padding: 8px; font-size: 0.75rem; }
+.alliance-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.alliance-flag { font-size: 1.1rem; }
+.alliance-card-info { display: flex; flex-direction: column; }
+.alliance-country { font-weight: 600; font-size: 0.75rem; }
+.alliance-label { font-size: 0.65rem; opacity: 0.6; }
+.alliance-strength { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+.alliance-strength-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.alliance-strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.alliance-strength-label { font-size: 0.6rem; opacity: 0.5; text-transform: capitalize; }
+.alliance-actions { margin: 0; padding-left: 14px; font-size: 0.65rem; opacity: 0.7; }
+.alliance-action { margin-bottom: 2px; }
+
+/* ----------------------------------------------------------
+   MENA Panels: Hormuz Monitor
+   ---------------------------------------------------------- */
+.hormuz-container { display: flex; flex-direction: column; gap: 10px; }
+.hormuz-transit { padding: 6px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; background: rgba(255,255,255,0.05); }
+.hormuz-status--normal { border-left: 3px solid #44aa44; }
+.hormuz-status--elevated { border-left: 3px solid #ffaa00; }
+.hormuz-status--disrupted { border-left: 3px solid #ff4444; }
+.hormuz-transit-label { font-weight: 600; }
+.hormuz-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hormuz-widget { display: flex; gap: 12px; justify-content: center; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; }
+.hormuz-widget--disabled { opacity: 0.5; flex-direction: column; align-items: center; text-align: center; }
+.hormuz-widget-icon { font-size: 1.5rem; }
+.hormuz-widget-msg { font-size: 0.7rem; opacity: 0.6; }
+.hormuz-stat { text-align: center; }
+.hormuz-stat-value { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hormuz-stat-label { font-size: 0.65rem; opacity: 0.6; }
+.hormuz-oil { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 0.8rem; }
+.hormuz-oil-label { opacity: 0.7; }
+.hormuz-oil-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+.hormuz-oil-change { font-size: 0.7rem; }
+.hormuz-oil-up { color: var(--semantic-normal, #44aa44); }
+.hormuz-oil-down { color: var(--semantic-critical, #ff4444); }
+.hormuz-events { margin-top: 4px; }
+.hormuz-events-title { font-weight: 600; font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8; }
+.hormuz-events-empty { font-size: 0.7rem; opacity: 0.5; text-align: center; padding: 8px; }
+.hormuz-event { display: flex; gap: 8px; font-size: 0.7rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.hormuz-event-time { opacity: 0.5; min-width: 65px; }
+.hormuz-event-type { font-weight: 500; text-transform: capitalize; }
+.hormuz-event-desc { opacity: 0.7; }
+
+/* ----------------------------------------------------------
+   MENA Panels: War Timeline
+   ---------------------------------------------------------- */
+.timeline-container { display: flex; flex-direction: column; gap: 8px; }
+.timeline-updated { font-size: 0.65rem; opacity: 0.5; text-align: right; }
+.timeline-line { display: flex; flex-direction: column; gap: 0; padding-left: 12px; border-left: 2px solid rgba(255,255,255,0.1); }
+.timeline-event { display: flex; gap: 10px; padding: 8px 0; position: relative; }
+.timeline-event:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.03); }
+.timeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; position: relative; left: -17px; margin-right: -10px; }
+.timeline-event-content { flex: 1; }
+.timeline-date { font-size: 0.65rem; opacity: 0.5; margin-bottom: 2px; }
+.timeline-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; }
+.timeline-desc { font-size: 0.7rem; opacity: 0.7; line-height: 1.3; }
+.timeline-source { font-size: 0.65rem; color: var(--accent, #60a5fa); text-decoration: none; margin-top: 2px; display: inline-block; }
+.timeline-source:hover { text-decoration: underline; }
+
+/* ----------------------------------------------------------
+   MENA Panels: Public Voice
+   ---------------------------------------------------------- */
+.voice-container { display: flex; flex-direction: column; gap: 10px; }
+.voice-gauge-wrapper { display: flex; flex-direction: column; gap: 4px; }
+.voice-gauge { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,0.05); }
+.voice-gauge--empty { justify-content: center; align-items: center; font-size: 0.7rem; opacity: 0.5; height: auto; padding: 8px; }
+.voice-gauge-segment { transition: width 0.3s; min-width: 2px; }
+.voice-legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.65rem; }
+.voice-legend-item { display: flex; align-items: center; gap: 3px; opacity: 0.7; }
+.voice-legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.voice-fairness { font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03); }
+.voice-fairness--balanced { color: var(--semantic-normal, #44aa44); }
+.voice-fairness--skewed { color: var(--semantic-elevated, #ffaa00); }
+.voice-fairness--heavy { color: var(--semantic-critical, #ff4444); }
+.voice-feed { display: flex; flex-direction: column; gap: 6px; }
+.voice-post { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.voice-post-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; font-size: 0.65rem; }
+.voice-sentiment-badge { padding: 1px 6px; border-radius: 3px; color: #fff; font-size: 0.6rem; font-weight: 500; }
+.voice-post-source { opacity: 0.6; }
+.voice-post-time { margin-left: auto; opacity: 0.5; }
+.voice-post-text { font-size: 0.75rem; line-height: 1.3; margin: 0; opacity: 0.85; }
+.voice-no-data { text-align: center; padding: 24px 12px; }
+.voice-no-data-icon { font-size: 2rem; margin-bottom: 8px; }

@@ -1,0 +1,44 @@
+{
+  "_comment": "Farsi (Persian) locale — stub file. TODO: AI-translate from English, then human review",
+  "app": {
+    "title": "مانیتور منا",
+    "subtitle": "اطلاعات لحظه‌ای درگیری ایران-اسرائیل"
+  },
+  "panels": {
+    "liveNews": "اخبار زنده",
+    "map": "نقشه منا",
+    "insights": "خلاصه اطلاعاتی هوش مصنوعی",
+    "strategicPosture": "وضعیت استراتژیک",
+    "cii": "شاخص بی‌ثباتی کشور",
+    "strategicRisk": "بررسی ریسک استراتژیک",
+    "intel": "خوراک اطلاعاتی",
+    "gdeltIntel": "اطلاعات زنده",
+    "cascade": "آبشار زیرساخت",
+    "middleeast": "خاورمیانه",
+    "monitors": "مانیتورهای من",
+    "orefSirens": "آژیرهای اسرائیل",
+    "telegramIntel": "اطلاعات تلگرام",
+    "conflictScorecard": "کارنامه درگیری",
+    "twoSidedNews": "اخبار دو طرف",
+    "factCheck": "راستی‌آزمایی",
+    "missileTracker": "ردیاب موشک و حملات",
+    "allianceTracker": "ردیاب اتحادها",
+    "hormuzMonitor": "تنگه هرمز",
+    "warTimeline": "خط زمانی جنگ",
+    "publicVoice": "صدای مردم"
+  },
+  "common": {
+    "loading": "در حال بارگذاری...",
+    "error": "خطا",
+    "retry": "تلاش مجدد",
+    "close": "بستن",
+    "search": "جستجو",
+    "settings": "تنظیمات",
+    "noData": "داده‌ای موجود نیست"
+  },
+  "header": {
+    "live": "زنده",
+    "cached": "ذخیره‌شده",
+    "unavailable": "ناموجود"
+  }
+}

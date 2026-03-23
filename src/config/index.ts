@@ -1,8 +1,5 @@
 // Configuration exports
-// For variant-specific builds, set VITE_VARIANT environment variable
-// VITE_VARIANT=tech → tech.worldmonitor.app (tech-focused)
-// VITE_VARIANT=full → worldmonitor.app (geopolitical)
-// VITE_VARIANT=finance → finance.worldmonitor.app (markets/trading)
+// MENA Monitor — VITE_VARIANT=mena (default)
 
 export { SITE_VARIANT } from './variant';
 
@@ -51,13 +48,7 @@ export {
   FREE_MAX_SOURCES,
 } from './panels';
 
-// ============================================
-// VARIANT-SPECIFIC EXPORTS
-// Only import what's needed for each variant
-// ============================================
-
-// Full variant (geopolitical) - only included in full builds
-// These are large data files that should be tree-shaken in tech builds
+// Geopolitical data
 export {
   FEEDS,
   INTEL_SOURCES,
@@ -66,7 +57,6 @@ export {
 export {
   INTEL_HOTSPOTS,
   CONFLICT_ZONES,
-
   MILITARY_BASES,
   NUCLEAR_FACILITIES,
   STRATEGIC_WATERWAYS,
@@ -88,55 +78,5 @@ export {
   type EntityEntry,
 } from './entities';
 
-// Tech variant - these are included in tech builds
-export { TECH_COMPANIES } from './tech-companies';
-export { AI_RESEARCH_LABS } from './ai-research-labs';
-export { STARTUP_ECOSYSTEMS } from './startup-ecosystems';
-export {
-  AI_REGULATIONS,
-  REGULATORY_ACTIONS,
-  COUNTRY_REGULATION_PROFILES,
-  getUpcomingDeadlines,
-  getRecentActions,
-} from './ai-regulations';
-export {
-  STARTUP_HUBS,
-  ACCELERATORS,
-  TECH_HQS,
-  CLOUD_REGIONS,
-  type StartupHub,
-  type Accelerator,
-  type TechHQ,
-  type CloudRegion,
-} from './tech-geo';
-
-// Finance variant - these are included in finance builds
-export {
-  STOCK_EXCHANGES,
-  FINANCIAL_CENTERS,
-  CENTRAL_BANKS,
-  COMMODITY_HUBS,
-  type StockExchange,
-  type FinancialCenter,
-  type CentralBank,
-  type CommodityHub,
-} from './finance-geo';
-
 // Gulf FDI investment database
 export { GULF_INVESTMENTS } from './gulf-fdi';
-
-// Commodity variant - these are included in commodity builds
-export {
-  COMMODITY_PRICES,
-  COMMODITY_MARKET_SYMBOLS,
-} from './commodity-markets';
-
-export {
-  MINING_SITES,
-  PROCESSING_PLANTS,
-  COMMODITY_PORTS,
-} from './commodity-geo';
-
-// COMMODITY_MINERS: 30+ mining company HQs — not yet rendered on map.
-// Uncomment when a miners layer is added to DeckGLMap.ts.
-// export { COMMODITY_MINERS, type CommodityMiner } from './commodity-miners';

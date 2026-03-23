@@ -5,11 +5,7 @@ import type { VariantConfig } from './base';
 // Re-export base config
 export * from './base';
 
-// Tech-specific exports
-export * from '../tech-companies';
-export * from '../ai-research-labs';
-export * from '../startup-ecosystems';
-export * from '../ai-regulations';
+// Tech-specific exports (removed — config files deleted for MENA variant)
 
 // Tech-focused feeds (subset of full feeds config)
 export {

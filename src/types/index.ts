@@ -83,11 +83,21 @@ export type EventCategory =
   | 'terrorism' | 'cyber' | 'health' | 'environmental' | 'military'
   | 'crime' | 'infrastructure' | 'tech' | 'general';
 
+export type MenaConflictType =
+  | 'strike' | 'missile' | 'interception' | 'diplomacy' | 'humanitarian'
+  | 'escalation' | 'naval' | 'proxy_attack' | 'cyber' | 'nuclear';
+
 export interface ThreatClassification {
   level: ThreatLevel;
   category: EventCategory;
   confidence: number;
   source: 'keyword' | 'ml' | 'llm';
+  /** MENA conflict-specific classification (present only for mena variant) */
+  menaConflictType?: MenaConflictType;
+  /** Which side is the primary actor/subject */
+  menaSide?: 'iran' | 'israel' | 'both' | 'neutral';
+  /** Whether this article contains factual claims suitable for fact-checking */
+  hasFactualClaims?: boolean;
 }
 
 export interface NewsItem {

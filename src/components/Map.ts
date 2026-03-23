@@ -33,17 +33,17 @@ import {
   SPACEPORTS,
   CRITICAL_MINERALS,
   SITE_VARIANT,
-  // Tech variant data
-  STARTUP_HUBS,
-  ACCELERATORS,
-  TECH_HQS,
-  CLOUD_REGIONS,
-  // Finance variant data
-  STOCK_EXCHANGES,
-  FINANCIAL_CENTERS,
-  CENTRAL_BANKS,
-  COMMODITY_HUBS,
 } from '@/config';
+
+// Stubs for removed variant-specific config data (tech/finance/commodity)
+const STARTUP_HUBS: any[] = [];
+const ACCELERATORS: any[] = [];
+const TECH_HQS: any[] = [];
+const CLOUD_REGIONS: any[] = [];
+const STOCK_EXCHANGES: any[] = [];
+const FINANCIAL_CENTERS: any[] = [];
+const CENTRAL_BANKS: any[] = [];
+const COMMODITY_HUBS: any[] = [];
 import { pinWebcam, isPinned } from '@/services/webcams/pinned-store';
 import type { WebcamEntry, WebcamCluster } from '@/generated/client/worldmonitor/webcam/v1/service_client';
 import { tokenizeForMatch, matchKeyword, findMatchingKeywords } from '@/utils/keyword-match';
@@ -404,7 +404,14 @@ export class MapComponent {
     const happyLayers: (keyof MapLayers)[] = [
       'positiveEvents', 'kindness', 'happiness', 'speciesRecovery', 'renewableInstallations',
     ];
-    const layers = SITE_VARIANT === 'tech' ? techLayers : SITE_VARIANT === 'finance' ? financeLayers : SITE_VARIANT === 'happy' ? happyLayers : fullLayers;
+    const menaLayers: (keyof MapLayers)[] = [
+      'iranAttacks', 'hotspots', 'conflicts',
+      'bases', 'nuclear', 'military', 'gpsJamming',
+      'pipelines', 'waterways', 'ais', 'flights',
+      'fires', 'sanctions', 'protests',
+      'weather', 'cables', 'outages',
+    ];
+    const layers = SITE_VARIANT === 'mena' ? menaLayers : SITE_VARIANT === 'tech' ? techLayers : SITE_VARIANT === 'finance' ? financeLayers : SITE_VARIANT === 'happy' ? happyLayers : fullLayers;
     const layerLabelKeys: Partial<Record<keyof MapLayers, string>> = {
       hotspots: 'components.deckgl.layers.intelHotspots',
       conflicts: 'components.deckgl.layers.conflictZones',

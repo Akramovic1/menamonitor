@@ -5,8 +5,7 @@ import type { VariantConfig } from './base';
 // Re-export base config
 export * from './base';
 
-// Finance-specific exports
-export * from '../finance-geo';
+// Finance-specific exports (removed — config files deleted for MENA variant)
 
 // Re-export feeds infrastructure
 export {

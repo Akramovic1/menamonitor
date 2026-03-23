@@ -836,6 +836,156 @@ const COMMODITY_MOBILE_MAP_LAYERS: MapLayers = {
 };
 
 // ============================================
+// MENA VARIANT (Iran-Israel Conflict Intelligence)
+// ============================================
+const MENA_PANELS: Record<string, PanelConfig> = {
+  map: { name: 'MENA Map', enabled: true, priority: 1 },
+  'ai-analysis': { name: 'AI Conflict Analysis', enabled: true, priority: 1 },
+  'live-news': { name: 'Conflict Feed', enabled: true, priority: 1 },
+  'two-sided-news': { name: 'Two-Sided News', enabled: true, priority: 1 },
+  'conflict-scorecard': { name: 'Conflict Scorecard', enabled: true, priority: 1 },
+  'fact-check': { name: 'Fact Check', enabled: true, priority: 1 },
+  'missile-tracker': { name: 'Missile & Strike Tracker', enabled: true, priority: 1 },
+  insights: { name: 'AI Intelligence Brief', enabled: true, priority: 1 },
+  cii: { name: 'Country Instability', enabled: true, priority: 1 },
+  'oref-sirens': { name: 'Israel Sirens', enabled: true, priority: 1 },
+  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
+  'escalation-correlation': { name: 'Escalation Monitor', enabled: true, priority: 1 },
+  cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
+  'alliance-tracker': { name: 'Alliance Tracker', enabled: true, priority: 1 },
+  'hormuz-monitor': { name: 'Strait of Hormuz', enabled: true, priority: 1 },
+  'war-timeline': { name: 'War Timeline', enabled: true, priority: 1 },
+  'public-voice': { name: 'Public Voice', enabled: true, priority: 1 },
+  'social-pulse': { name: 'Social Pulse', enabled: true, priority: 1 },
+  'telegram-intel': { name: 'Telegram Intel', enabled: true, priority: 2 },
+  'gdelt-intel': { name: 'GDELT Intelligence', enabled: true, priority: 2 },
+  intel: { name: 'Intel Feed', enabled: true, priority: 2 },
+  monitors: { name: 'Custom Monitors', enabled: true, priority: 2 },
+  middleeast: { name: 'Middle East News', enabled: true, priority: 2 },
+};
+
+const MENA_MAP_LAYERS: MapLayers = {
+  conflicts: true,
+  hotspots: true,
+  military: true,
+  bases: true,
+  flights: true,
+  ais: true,
+  pipelines: true,
+  waterways: true,
+  nuclear: true,
+  sanctions: true,
+  fires: true,
+  iranAttacks: true,
+  gpsJamming: true,
+  // Off by default, user-toggleable
+  protests: false,
+  weather: false,
+  cables: false,
+  outages: false,
+  radiationWatch: false,
+  cyberThreats: false,
+  satellites: false,
+  economic: false,
+  natural: false,
+  irradiators: false,
+  spaceports: false,
+  minerals: false,
+  datacenters: false,
+  // Data source layers
+  ucdpEvents: false,
+  displacement: false,
+  climate: false,
+  // Tech layers (disabled)
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  // Finance layers (disabled)
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: false,
+  gulfInvestments: false,
+  // Happy variant layers (disabled)
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  ciiChoropleth: false,
+  dayNight: false,
+  // Commodity layers (disabled)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
+  webcams: false,
+  weatherRadar: false,
+};
+
+const MENA_MOBILE_MAP_LAYERS: MapLayers = {
+  conflicts: true,
+  hotspots: true,
+  military: false,
+  bases: false,
+  flights: false,
+  ais: false,
+  pipelines: false,
+  waterways: false,
+  nuclear: true,
+  sanctions: true,
+  fires: true,
+  iranAttacks: true,
+  gpsJamming: false,
+  protests: false,
+  weather: false,
+  cables: false,
+  outages: false,
+  radiationWatch: false,
+  cyberThreats: false,
+  satellites: false,
+  economic: false,
+  natural: false,
+  irradiators: false,
+  spaceports: false,
+  minerals: false,
+  datacenters: false,
+  // Data source layers
+  ucdpEvents: false,
+  displacement: false,
+  climate: false,
+  // Tech layers (disabled)
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  // Finance layers (disabled)
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: false,
+  gulfInvestments: false,
+  // Happy variant layers (disabled)
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  ciiChoropleth: false,
+  dayNight: false,
+  // Commodity layers (disabled)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
+  webcams: false,
+  weatherRadar: false,
+};
+
+// ============================================
 // UNIFIED PANEL REGISTRY
 // ============================================
 
@@ -843,6 +993,7 @@ const COMMODITY_MOBILE_MAP_LAYERS: MapLayers = {
 export const ALL_PANELS: Record<string, PanelConfig> = {
   ...HAPPY_PANELS,
   ...COMMODITY_PANELS,
+  ...MENA_PANELS,
   ...TECH_PANELS,
   ...FINANCE_PANELS,
   ...FULL_PANELS,
@@ -855,6 +1006,7 @@ export const VARIANT_DEFAULTS: Record<string, string[]> = {
   finance:   Object.keys(FINANCE_PANELS),
   commodity: Object.keys(COMMODITY_PANELS),
   happy:     Object.keys(HAPPY_PANELS),
+  mena:      Object.keys(MENA_PANELS),
 };
 
 /**
@@ -879,6 +1031,11 @@ export const VARIANT_PANEL_OVERRIDES: Partial<Record<string, Partial<Record<stri
   },
   happy: {
     map:         { name: 'World Map' },
+  },
+  mena: {
+    map:         { name: 'MENA Map' },
+    'live-news': { name: 'Conflict Feed' },
+    insights:    { name: 'AI Intelligence Brief' },
   },
 };
 
@@ -921,25 +1078,29 @@ export const DEFAULT_PANELS: Record<string, PanelConfig> = Object.fromEntries(
   )
 );
 
-export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' 
-  ? HAPPY_MAP_LAYERS 
-  : SITE_VARIANT === 'tech' 
-    ? TECH_MAP_LAYERS 
-    : SITE_VARIANT === 'finance' 
-      ? FINANCE_MAP_LAYERS 
+export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy'
+  ? HAPPY_MAP_LAYERS
+  : SITE_VARIANT === 'tech'
+    ? TECH_MAP_LAYERS
+    : SITE_VARIANT === 'finance'
+      ? FINANCE_MAP_LAYERS
       : SITE_VARIANT === 'commodity'
         ? COMMODITY_MAP_LAYERS
-        : FULL_MAP_LAYERS;
+        : SITE_VARIANT === 'mena'
+          ? MENA_MAP_LAYERS
+          : FULL_MAP_LAYERS;
 
-export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' 
-  ? HAPPY_MOBILE_MAP_LAYERS 
-  : SITE_VARIANT === 'tech' 
-    ? TECH_MOBILE_MAP_LAYERS 
-    : SITE_VARIANT === 'finance' 
-      ? FINANCE_MOBILE_MAP_LAYERS 
+export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy'
+  ? HAPPY_MOBILE_MAP_LAYERS
+  : SITE_VARIANT === 'tech'
+    ? TECH_MOBILE_MAP_LAYERS
+    : SITE_VARIANT === 'finance'
+      ? FINANCE_MOBILE_MAP_LAYERS
       : SITE_VARIANT === 'commodity'
         ? COMMODITY_MOBILE_MAP_LAYERS
-        : FULL_MOBILE_MAP_LAYERS;
+        : SITE_VARIANT === 'mena'
+          ? MENA_MOBILE_MAP_LAYERS
+          : FULL_MOBILE_MAP_LAYERS;
 
 /** Maps map-layer toggle keys to their data-freshness source IDs (single source of truth). */
 export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> = {

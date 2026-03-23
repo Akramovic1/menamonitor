@@ -5,10 +5,7 @@ import type { VariantConfig } from './base';
 // Re-export base config
 export * from './base';
 
-// Commodity-specific data exports (explicit named re-exports avoid VS Code language-server path issues)
-export { COMMODITY_SECTORS, COMMODITY_PRICES, COMMODITY_MARKET_SYMBOLS } from '@/config/commodity-markets';
-export type { MineralType, MineSiteStatus, MineSite, ProcessingPlant, CommodityPort } from '@/config/commodity-geo';
-export { MINING_SITES, PROCESSING_PLANTS, COMMODITY_PORTS } from '@/config/commodity-geo';
+// Commodity-specific data exports (removed — config files deleted for MENA variant)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PANEL CONFIGURATION — Commodity-only panels

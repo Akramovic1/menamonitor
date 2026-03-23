@@ -1,0 +1,41 @@
+{
+  "updatedAt": "2025-01-15T12:00:00Z",
+  "iran": {
+    "strikesLaunched": 0,
+    "strikesReceived": 0,
+    "missilesIntercepted": 0,
+    "facilitiesDestroyed": 0,
+    "casualtiesMilitary": 0,
+    "casualtiesCivilian": 0,
+    "trends": {
+      "strikesLaunched": "stable",
+      "strikesReceived": "stable",
+      "missilesIntercepted": "stable",
+      "facilitiesDestroyed": "stable",
+      "casualtiesMilitary": "stable",
+      "casualtiesCivilian": "stable"
+    }
+  },
+  "israel": {
+    "strikesLaunched": 0,
+    "strikesReceived": 0,
+    "missilesIntercepted": 0,
+    "facilitiesDestroyed": 0,
+    "casualtiesMilitary": 0,
+    "casualtiesCivilian": 0,
+    "trends": {
+      "strikesLaunched": "stable",
+      "strikesReceived": "stable",
+      "missilesIntercepted": "stable",
+      "facilitiesDestroyed": "stable",
+      "casualtiesMilitary": "stable",
+      "casualtiesCivilian": "stable"
+    }
+  },
+  "shared": {
+    "shippingDisruptions": 0,
+    "oilPriceImpactPercent": 0,
+    "humanitarianIncidents": 0,
+    "displacedPersons": 0
+  }
+}

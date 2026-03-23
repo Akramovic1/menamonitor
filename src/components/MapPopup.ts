@@ -4,7 +4,11 @@ import type { Earthquake } from '@/services/earthquakes';
 import type { WeatherAlert } from '@/services/weather';
 import type { RadiationObservation } from '@/services/radiation';
 import { UNDERSEA_CABLES } from '@/config';
-import type { StartupHub, Accelerator, TechHQ, CloudRegion } from '@/config/tech-geo';
+// Types stubbed for removed tech variant config
+type StartupHub = Record<string, any>;
+type Accelerator = Record<string, any>;
+type TechHQ = Record<string, any>;
+type CloudRegion = Record<string, any>;
 import type { TechHubActivity } from '@/services/tech-activity';
 import type { GeoHubActivity } from '@/services/geo-activity';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
@@ -2132,7 +2136,7 @@ ${isFeatureAvailable('wingbitsEnrichment') ? '<div class="wingbits-live-section"
         ${acc.notable && acc.notable.length > 0 ? `
         <div class="popup-notable">
           <span class="notable-label">${t('popups.accelerator.notableAlumni')}</span>
-          <span class="notable-list">${acc.notable.map(n => escapeHtml(n)).join(', ')}</span>
+          <span class="notable-list">${acc.notable.map((n: string) => escapeHtml(n)).join(', ')}</span>
         </div>
         ` : ''}
       </div>
@@ -2189,7 +2193,7 @@ ${isFeatureAvailable('wingbitsEnrichment') ? '<div class="wingbits-live-section"
 
     const sortedItems = [...data.items].sort((a, b) => {
       const typeOrder = { faang: 0, unicorn: 1, public: 2 };
-      return (typeOrder[a.type] ?? 3) - (typeOrder[b.type] ?? 3);
+      return ((typeOrder as any)[a.type] ?? 3) - ((typeOrder as any)[b.type] ?? 3);
     });
 
     const listItems = sortedItems.map(hq => {

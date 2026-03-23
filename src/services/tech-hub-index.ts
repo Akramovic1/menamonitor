@@ -1,6 +1,7 @@
-import { STARTUP_ECOSYSTEMS } from '@/config/startup-ecosystems';
-import { TECH_COMPANIES } from '@/config/tech-companies';
-import { STARTUP_HUBS } from '@/config/tech-geo';
+// Stubs for removed variant-specific config data
+const STARTUP_ECOSYSTEMS: any[] = [];
+const TECH_COMPANIES: any[] = [];
+const STARTUP_HUBS: any[] = [];
 import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
 
 export interface TechHubLocation {

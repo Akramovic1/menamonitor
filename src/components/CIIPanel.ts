@@ -5,6 +5,8 @@ import { t } from '../services/i18n';
 import { h, replaceChildren, rawHtml } from '@/utils/dom-utils';
 import type { CachedRiskScores } from '@/services/cached-risk-scores';
 import { toCountryScore } from '@/services/cached-risk-scores';
+import { SITE_VARIANT } from '@/config/variant';
+import { MENA_CII_COUNTRIES } from '@/config/countries';
 
 export class CIIPanel extends Panel {
   private scores: CountryScore[] = [];
@@ -127,7 +129,11 @@ export class CIIPanel extends Panel {
     if (!this.hasCachedRender) this.showLoading();
 
     try {
-      const localScores = calculateCII();
+      let localScores = calculateCII();
+      // MENA variant: filter to MENA countries only
+      if (SITE_VARIANT === 'mena') {
+        localScores = localScores.filter(s => MENA_CII_COUNTRIES.has(s.code));
+      }
       const localWithData = localScores.filter(s => s.score > 0).length;
       this.scores = localScores;
       console.log(`[CIIPanel] Calculated ${localWithData} countries with focal point intelligence`);
@@ -152,7 +158,10 @@ export class CIIPanel extends Panel {
   }
 
   public renderFromCached(cached: CachedRiskScores): void {
-    const scores = cached.cii.map(toCountryScore).filter(s => s.score > 0);
+    let scores = cached.cii.map(toCountryScore).filter(s => s.score > 0);
+    if (SITE_VARIANT === 'mena') {
+      scores = scores.filter(s => MENA_CII_COUNTRIES.has(s.code));
+    }
     if (scores.length === 0) return;
     this.scores = scores;
     this.hasCachedRender = true;

@@ -122,6 +122,26 @@ export const SOURCE_TIERS: Record<string, number> = {
   'BBC Persian': 2,
   'Iran International': 3,
   'Fars News': 3,
+  // MENA variant — Iran-side
+  'IRNA': 1,
+  'Tasnim': 3,
+  'ISNA': 2,
+  'Tehran Times': 3,
+  'Radio Farda': 2,
+  // MENA variant — Israel-side
+  'Times of Israel': 2,
+  'Ynet News': 2,
+  'Jerusalem Post': 2,
+  'i24 News': 2,
+  'Israel Hayom': 3,
+  'Arutz Sheva': 3,
+  // MENA variant — Neutral
+  'Middle East Eye': 2,
+  'BBC Arabic': 2,
+  'Sky News Arabia': 2,
+  'RT Arabic': 3,
+  'France 24 Arabic': 2,
+  'DW Arabic': 2,
   'MIIT (China)': 1,
   'MOFCOM (China)': 1,
   // Turkish
@@ -421,7 +441,9 @@ export const SOURCE_PROPAGANDA_RISK: Record<string, SourceRiskProfile> = {
   'RT Russia': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media, Russia desk' },
   'Sputnik': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media' },
   'CGTN': { risk: 'high', stateAffiliated: 'China', note: 'Chinese state broadcaster' },
-  'Press TV': { risk: 'high', stateAffiliated: 'Iran', note: 'Iranian state media' },
+  'Press TV': { risk: 'high', stateAffiliated: 'Iran', note: 'Iranian state English-language media' },
+  'IRNA': { risk: 'high', stateAffiliated: 'Iran', note: 'Official state news agency' },
+  'Tasnim': { risk: 'high', stateAffiliated: 'Iran', note: 'IRGC-affiliated' },
   'KCNA': { risk: 'high', stateAffiliated: 'North Korea', note: 'North Korean state media' },
 
   // Medium risk - State-affiliated or known bias
@@ -433,6 +455,10 @@ export const SOURCE_PROPAGANDA_RISK: Record<string, SourceRiskProfile> = {
   'Le Monde': { risk: 'low', note: 'French newspaper of record' },
   'DW News': { risk: 'medium', stateAffiliated: 'Germany', note: 'German state-funded, editorially independent' },
   'Voice of America': { risk: 'medium', stateAffiliated: 'USA', note: 'US government-funded' },
+  'ISNA': { risk: 'medium', note: 'Semi-independent Iranian students agency' },
+  'Tehran Times': { risk: 'medium', stateAffiliated: 'Iran', note: 'State-affiliated English daily' },
+  'Israel Hayom': { risk: 'medium', note: 'Pro-government, Adelson-funded' },
+  'Arutz Sheva': { risk: 'medium', note: 'Right-wing religious Zionist' },
   'Kyiv Independent': { risk: 'medium', knownBiases: ['Pro-Ukraine'], note: 'Ukrainian perspective on Russia-Ukraine war' },
   'Moscow Times': { risk: 'medium', knownBiases: ['Anti-Kremlin'], note: 'Independent, critical of Russian government' },
 
@@ -445,6 +471,10 @@ export const SOURCE_PROPAGANDA_RISK: Record<string, SourceRiskProfile> = {
   'Guardian World': { risk: 'low', knownBiases: ['Center-left'], note: 'Scott Trust ownership, no shareholders' },
   'Financial Times': { risk: 'low', note: 'Business focus, Nikkei-owned' },
   'Bellingcat': { risk: 'low', note: 'Open-source investigations, methodology transparent' },
+  'Times of Israel': { risk: 'low', note: 'Independent, centrist' },
+  'Haaretz': { risk: 'low', knownBiases: ['Center-left'], note: 'Independent, oldest Israeli daily' },
+  'Jerusalem Post': { risk: 'low', note: 'Independent, center-right' },
+  'Middle East Eye': { risk: 'low', knownBiases: ['Pro-Palestinian leaning'], note: 'UK-based independent' },
   'Brasil Paralelo': { risk: 'low', note: 'Independent media company: no political ties, no public funding, 100% subscriber-funded.' },
 };
 
@@ -456,6 +486,23 @@ export function isStateAffiliatedSource(sourceName: string): boolean {
   const profile = SOURCE_PROPAGANDA_RISK[sourceName];
   return !!profile?.stateAffiliated;
 }
+
+/** Side classification for two-sided news panel (MENA variant). */
+export const SOURCE_SIDES: Record<string, 'iran' | 'israel' | 'neutral'> = {
+  'IRNA': 'iran', 'Press TV': 'iran', 'Fars News': 'iran', 'Tasnim': 'iran',
+  'ISNA': 'iran', 'Tehran Times': 'iran',
+  'BBC Persian': 'neutral', 'Iran International': 'neutral', 'Radio Farda': 'neutral',
+  'Times of Israel': 'israel', 'Ynet News': 'israel', 'Haaretz': 'israel',
+  'Jerusalem Post': 'israel', 'i24 News': 'israel', 'Israel Hayom': 'israel',
+  'Arutz Sheva': 'israel',
+  'Reuters': 'neutral', 'AP News': 'neutral', 'BBC Middle East': 'neutral',
+  'BBC World': 'neutral', 'Al Jazeera': 'neutral', 'Al Arabiya': 'neutral',
+  'Guardian ME': 'neutral', 'Middle East Eye': 'neutral', 'The National': 'neutral',
+  'Rudaw': 'neutral', 'Arab News': 'neutral', 'Asharq News': 'neutral',
+  'Oman Observer': 'neutral', 'Asharq Business': 'neutral',
+  'BBC Arabic': 'neutral', 'Sky News Arabia': 'neutral', 'RT Arabic': 'neutral',
+  'France 24 Arabic': 'neutral', 'DW Arabic': 'neutral',
+};
 
 let _sourcePanelMap: Map<string, string> | null = null;
 export function getSourcePanelId(sourceName: string): string {
@@ -567,21 +614,40 @@ const FULL_FEEDS: Record<string, Feed[]> = {
     { name: 'Moscow Times', url: rss('https://www.themoscowtimes.com/rss/news') },
   ],
   middleeast: [
-    { name: 'BBC Middle East', url: rss('https://feeds.bbci.co.uk/news/world/middle_east/rss.xml') },
+    // Arabic-language feeds first (primary audience)
     { name: 'Al Jazeera', url: { en: rss('https://www.aljazeera.com/xml/rss/all.xml'), ar: rss('https://www.aljazeera.net/aljazeerarss/a7c186be-1adb-4b11-a982-4783e765316e/4e17ecdc-8fb9-40de-a5d6-d00f72384a51') } },
-    // AlArabiya EN blocks cloud IPs — Google News fallback; AR RSS is direct
     { name: 'Al Arabiya', url: { en: rss('https://news.google.com/rss/search?q=site:english.alarabiya.net+when:2d&hl=en-US&gl=US&ceid=US:en'), ar: rss('https://www.alarabiya.net/tools/mrss/?cat=main') } },
-    // Arab News and Times of Israel removed — 403 from cloud IPs
-    { name: 'Guardian ME', url: rss('https://www.theguardian.com/world/middleeast/rss') },
+    { name: 'Asharq News', url: rss('https://asharq.com/snapchat/rss.xml'), lang: 'ar' },
+    { name: 'BBC Arabic', url: rss('https://feeds.bbci.co.uk/arabic/rss.xml'), lang: 'ar' },
+    { name: 'Sky News Arabia', url: rss('https://news.google.com/rss/search?q=site:skynewsarabia.com+when:2d&hl=ar'), lang: 'ar' },
+    { name: 'RT Arabic', url: rss('https://arabic.rt.com/rss/'), lang: 'ar' },
+    { name: 'France 24 Arabic', url: rss('https://www.france24.com/ar/rss'), lang: 'ar' },
+    { name: 'DW Arabic', url: rss('https://rss.dw.com/xml/rss-ar-all'), lang: 'ar' },
+    { name: 'Arab News', url: rss('https://news.google.com/rss/search?q=site:arabnews.com+when:7d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Asharq Business', url: rss('https://asharqbusiness.com/rss.xml') },
+    // Iran-side sources
+    { name: 'Fars News', url: rss('https://news.google.com/rss/search?q=site:farsnews.ir+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'IRNA', url: rss('https://news.google.com/rss/search?q=site:irna.ir+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Tasnim', url: rss('https://news.google.com/rss/search?q=site:tasnimnews.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Tehran Times', url: rss('https://news.google.com/rss/search?q=site:tehrantimes.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'ISNA', url: rss('https://news.google.com/rss/search?q=site:isna.ir+when:2d&hl=en-US&gl=US&ceid=US:en') },
     { name: 'BBC Persian', url: rss('http://feeds.bbci.co.uk/persian/tv-and-radio-37434376/rss.xml') },
     { name: 'Iran International', url: rss('https://news.google.com/rss/search?q=site:iranintl.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
-    { name: 'Fars News', url: rss('https://news.google.com/rss/search?q=site:farsnews.ir+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Radio Farda', url: rss('https://news.google.com/rss/search?q=site:radiofarda.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    // Israel-side sources
+    { name: 'Times of Israel', url: rss('https://news.google.com/rss/search?q=site:timesofisrael.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Ynet News', url: rss('https://news.google.com/rss/search?q=site:ynetnews.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
     { name: 'Haaretz', url: rss('https://news.google.com/rss/search?q=site:haaretz.com+when:7d&hl=en-US&gl=US&ceid=US:en') },
-    { name: 'Arab News', url: rss('https://news.google.com/rss/search?q=site:arabnews.com+when:7d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Jerusalem Post', url: rss('https://news.google.com/rss/search?q=site:jpost.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'i24 News', url: rss('https://news.google.com/rss/search?q=site:i24news.tv+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Israel Hayom', url: rss('https://news.google.com/rss/search?q=site:israelhayom.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Arutz Sheva', url: rss('https://news.google.com/rss/search?q=site:israelnationalnews.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    // English neutral sources
+    { name: 'BBC Middle East', url: rss('https://feeds.bbci.co.uk/news/world/middle_east/rss.xml') },
+    { name: 'Guardian ME', url: rss('https://www.theguardian.com/world/middleeast/rss') },
+    { name: 'Middle East Eye', url: rss('https://www.middleeasteye.net/rss') },
     { name: 'The National', url: rss('https://news.google.com/rss/search?q=site:thenationalnews.com+when:2d&hl=en-US&gl=US&ceid=US:en') },
     { name: 'Oman Observer', url: rss('https://www.omanobserver.om/rssFeed/1') },
-    { name: 'Asharq Business', url: rss('https://asharqbusiness.com/rss.xml') },
-    { name: 'Asharq News', url: rss('https://asharq.com/snapchat/rss.xml'), lang: 'ar' },
     { name: 'Rudaw', url: rss('https://news.google.com/rss/search?q=site:rudaw.net+when:7d&hl=en&gl=US&ceid=US:en') },
   ],
   tech: [

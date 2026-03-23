@@ -224,6 +224,34 @@ export const CURATED_COUNTRIES: Record<string, CuratedCountryConfig> = {
     baselineRisk: 45,
     eventMultiplier: 2.0,
   },
+  BH: {
+    name: 'Bahrain',
+    scoringKeywords: ['bahrain', 'bahraini', 'manama'],
+    searchAliases: ['bahrain', 'bahraini', 'manama'],
+    baselineRisk: 15,
+    eventMultiplier: 1.0,
+  },
+  KW: {
+    name: 'Kuwait',
+    scoringKeywords: ['kuwait', 'kuwaiti'],
+    searchAliases: ['kuwait', 'kuwaiti', 'kuwait city'],
+    baselineRisk: 10,
+    eventMultiplier: 1.0,
+  },
+  OM: {
+    name: 'Oman',
+    scoringKeywords: ['oman', 'omani', 'muscat'],
+    searchAliases: ['oman', 'omani', 'muscat'],
+    baselineRisk: 5,
+    eventMultiplier: 1.0,
+  },
+  JO: {
+    name: 'Jordan',
+    scoringKeywords: ['jordan', 'jordanian', 'amman'],
+    searchAliases: ['jordan', 'jordanian', 'amman'],
+    baselineRisk: 15,
+    eventMultiplier: 1.0,
+  },
 };
 
 export const TIER1_COUNTRIES: Record<string, string> = {
@@ -259,6 +287,11 @@ export const TIER1_COUNTRIES: Record<string, string> = {
   JP: 'Japan',
   QA: 'Qatar',
 };
+
+/** MENA countries for variant-filtered CII display */
+export const MENA_CII_COUNTRIES = new Set([
+  'IR', 'IL', 'IQ', 'SY', 'LB', 'YE', 'SA', 'AE', 'QA', 'BH', 'KW', 'OM', 'JO', 'EG', 'TR', 'PK', 'AF',
+]);
 
 export const DEFAULT_BASELINE_RISK = 15;
 export const DEFAULT_EVENT_MULTIPLIER = 1.0;

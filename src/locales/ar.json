@@ -281,7 +281,16 @@
     "gulfIndices": "مؤشرات الخليج",
     "gulfCurrencies": "عملات الخليج",
     "gulfOil": "نفط الخليج",
-    "bigmac": "Updated Big Mac Index"
+    "bigmac": "Updated Big Mac Index",
+    "conflictScorecard": "بطاقة أداء النزاع",
+    "twoSidedNews": "أخبار الجانبين",
+    "factCheck": "تدقيق الحقائق",
+    "missileTracker": "متتبع الصواريخ والضربات",
+    "allianceTracker": "متتبع التحالفات",
+    "hormuzMonitor": "مضيق هرمز",
+    "warTimeline": "الجدول الزمني للحرب",
+    "publicVoice": "صوت الشعب",
+    "socialPulse": "نبض التواصل"
   },
   "commands": {
     "prefixes": {

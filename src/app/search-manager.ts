@@ -16,11 +16,16 @@ import { INTEL_HOTSPOTS, CONFLICT_ZONES, MILITARY_BASES, UNDERSEA_CABLES, NUCLEA
 import { PIPELINES } from '@/config/pipelines';
 import { AI_DATA_CENTERS } from '@/config/ai-datacenters';
 import { GAMMA_IRRADIATORS } from '@/config/irradiators';
-import { TECH_COMPANIES } from '@/config/tech-companies';
-import { AI_RESEARCH_LABS } from '@/config/ai-research-labs';
-import { STARTUP_ECOSYSTEMS } from '@/config/startup-ecosystems';
-import { TECH_HQS, ACCELERATORS } from '@/config/tech-geo';
-import { STOCK_EXCHANGES, FINANCIAL_CENTERS, CENTRAL_BANKS, COMMODITY_HUBS } from '@/config/finance-geo';
+// Stubs for removed variant-specific config data
+const TECH_COMPANIES: any[] = [];
+const AI_RESEARCH_LABS: any[] = [];
+const STARTUP_ECOSYSTEMS: any[] = [];
+const TECH_HQS: any[] = [];
+const ACCELERATORS: any[] = [];
+const STOCK_EXCHANGES: any[] = [];
+const FINANCIAL_CENTERS: any[] = [];
+const CENTRAL_BANKS: any[] = [];
+const COMMODITY_HUBS: any[] = [];
 import { trackSearchResultSelected, trackCountrySelected } from '@/services/analytics';
 import { t } from '@/services/i18n';
 import { saveToStorage, setTheme } from '@/utils';

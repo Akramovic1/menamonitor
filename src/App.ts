@@ -24,16 +24,8 @@ import type { ParsedMapUrlState } from '@/utils';
 import { SignalModal, IntelligenceGapBadge, BreakingNewsBanner } from '@/components';
 import { initBreakingNewsAlerts, destroyBreakingNewsAlerts } from '@/services/breaking-news-alerts';
 import type { ServiceStatusPanel } from '@/components/ServiceStatusPanel';
-import type { StablecoinPanel } from '@/components/StablecoinPanel';
-import type { ETFFlowsPanel } from '@/components/ETFFlowsPanel';
-import type { MacroSignalsPanel } from '@/components/MacroSignalsPanel';
 import type { StrategicPosturePanel } from '@/components/StrategicPosturePanel';
 import type { StrategicRiskPanel } from '@/components/StrategicRiskPanel';
-import type { GulfEconomiesPanel } from '@/components/GulfEconomiesPanel';
-import type { GroceryBasketPanel } from '@/components/GroceryBasketPanel';
-import type { BigMacPanel } from '@/components/BigMacPanel';
-import type { FuelPricesPanel } from '@/components/FuelPricesPanel';
-import type { ConsumerPricesPanel } from '@/components/ConsumerPricesPanel';
 import { isDesktopRuntime, waitForSidecarReady } from '@/services/runtime';
 import { getSecretState } from '@/services/runtime-config';
 import { isProUser } from '@/services/widget-store';
@@ -225,78 +217,13 @@ export class App {
     };
 
     const shouldPrime = (id: string): boolean => forceAll || this.isPanelNearViewport(id);
-    const shouldPrimeAny = (ids: string[]): boolean => forceAll || this.isAnyPanelNearViewport(ids);
 
     if (shouldPrime('service-status')) {
       const panel = this.state.panels['service-status'] as ServiceStatusPanel | undefined;
       if (panel) primeTask('service-status', () => panel.fetchStatus());
     }
-    if (shouldPrime('macro-signals')) {
-      const panel = this.state.panels['macro-signals'] as MacroSignalsPanel | undefined;
-      if (panel) primeTask('macro-signals', () => panel.fetchData());
-    }
-    if (shouldPrime('etf-flows')) {
-      const panel = this.state.panels['etf-flows'] as ETFFlowsPanel | undefined;
-      if (panel) primeTask('etf-flows', () => panel.fetchData());
-    }
-    if (shouldPrime('stablecoins')) {
-      const panel = this.state.panels.stablecoins as StablecoinPanel | undefined;
-      if (panel) primeTask('stablecoins', () => panel.fetchData());
-    }
     if (shouldPrime('telegram-intel')) {
       primeTask('telegram-intel', () => this.dataLoader.loadTelegramIntel());
-    }
-    if (shouldPrime('gulf-economies')) {
-      const panel = this.state.panels['gulf-economies'] as GulfEconomiesPanel | undefined;
-      if (panel) primeTask('gulf-economies', () => panel.fetchData());
-    }
-    if (shouldPrime('grocery-basket')) {
-      const panel = this.state.panels['grocery-basket'] as GroceryBasketPanel | undefined;
-      if (panel) primeTask('grocery-basket', () => panel.fetchData());
-    }
-    if (shouldPrime('bigmac')) {
-      const panel = this.state.panels['bigmac'] as BigMacPanel | undefined;
-      if (panel) primeTask('bigmac', () => panel.fetchData());
-    }
-    if (shouldPrime('fuel-prices')) {
-      const panel = this.state.panels['fuel-prices'] as FuelPricesPanel | undefined;
-      if (panel) primeTask('fuel-prices', () => panel.fetchData());
-    }
-    if (shouldPrime('consumer-prices')) {
-      const panel = this.state.panels['consumer-prices'] as ConsumerPricesPanel | undefined;
-      if (panel) primeTask('consumer-prices', () => panel.fetchData());
-    }
-    if (shouldPrimeAny(['markets', 'heatmap', 'commodities', 'crypto', 'energy-complex'])) {
-      primeTask('markets', () => this.dataLoader.loadMarkets());
-    }
-    if (shouldPrime('polymarket')) {
-      primeTask('predictions', () => this.dataLoader.loadPredictions());
-    }
-    if (shouldPrime('economic')) {
-      primeTask('fred', () => this.dataLoader.loadFredData());
-      primeTask('spending', () => this.dataLoader.loadGovernmentSpending());
-      primeTask('bis', () => this.dataLoader.loadBisData());
-    }
-    if (shouldPrime('energy-complex')) {
-      primeTask('oil', () => this.dataLoader.loadOilAnalytics());
-    }
-    if (shouldPrime('trade-policy')) {
-      primeTask('tradePolicy', () => this.dataLoader.loadTradePolicy());
-    }
-    if (shouldPrime('supply-chain')) {
-      primeTask('supplyChain', () => this.dataLoader.loadSupplyChain());
-    }
-    const _wmAccess = getSecretState('WORLDMONITOR_API_KEY').present || isProUser();
-    if (_wmAccess) {
-      if (shouldPrime('stock-analysis')) {
-        primeTask('stockAnalysis', () => this.dataLoader.loadStockAnalysis());
-      }
-      if (shouldPrime('stock-backtest')) {
-        primeTask('stockBacktest', () => this.dataLoader.loadStockBacktest());
-      }
-      if (shouldPrime('daily-market-brief')) {
-        primeTask('dailyMarketBrief', () => this.dataLoader.loadDailyMarketBrief());
-      }
     }
 
     if (tasks.length > 0) {
@@ -774,7 +701,7 @@ export class App {
 
     // Phase 1: Layout (creates map + panels — they'll find hydrated data)
     this.panelLayout.init();
-    showProBanner(this.state.container);
+    if (SITE_VARIANT !== 'mena') showProBanner(this.state.container);
     this.updateConnectivityUi();
     window.addEventListener('online', this.handleConnectivityChange);
     window.addEventListener('offline', this.handleConnectivityChange);
@@ -895,6 +822,11 @@ export class App {
       this.state.map?.hideLayerToggle('cyberThreats');
     }
 
+    // MENA service health diagnostic
+    if (SITE_VARIANT === 'mena') {
+      this.checkServiceHealth();
+    }
+
     // Phase 7: Refresh scheduling
     this.setupRefreshIntervals();
     this.eventHandlers.setupSnapshotSaving();
@@ -976,6 +908,32 @@ export class App {
     }
   }
 
+  private checkServiceHealth(): void {
+    const results: Record<string, string> = {};
+    const checks: Promise<void>[] = [];
+
+    checks.push(
+      fetch('/api/fact-check', { method: 'OPTIONS' })
+        .then(r => { results['Fact-Check API'] = r.ok || r.status === 204 ? '✅' : `⚠️ ${r.status}`; })
+        .catch(() => { results['Fact-Check API'] = '❌ offline'; }),
+    );
+    checks.push(
+      fetch('/api/ai-analysis', { method: 'OPTIONS' })
+        .then(r => { results['AI Analysis API'] = r.ok || r.status === 204 ? '✅' : `⚠️ ${r.status}`; })
+        .catch(() => { results['AI Analysis API'] = '❌ offline'; }),
+    );
+    checks.push(
+      fetch('/api/conflict-score')
+        .then(r => { results['Conflict Score API'] = r.ok ? '✅' : `⚠️ ${r.status}`; })
+        .catch(() => { results['Conflict Score API'] = '❌ offline'; }),
+    );
+
+    Promise.allSettled(checks).then(() => {
+      console.log('[MENAMonitor] Service health:');
+      console.table(results);
+    });
+  }
+
   private setupRefreshIntervals(): void {
     // Always refresh news for all variants
     this.refreshScheduler.scheduleRefresh('news', () => this.dataLoader.loadNews(), REFRESH_INTERVALS.feeds);
@@ -1051,24 +1009,6 @@ export class App {
       () => this.isPanelNearViewport('service-status')
     );
     this.refreshScheduler.scheduleRefresh(
-      'stablecoins',
-      () => (this.state.panels.stablecoins as StablecoinPanel).fetchData(),
-      REFRESH_INTERVALS.stablecoins,
-      () => this.isPanelNearViewport('stablecoins')
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'etf-flows',
-      () => (this.state.panels['etf-flows'] as ETFFlowsPanel).fetchData(),
-      REFRESH_INTERVALS.etfFlows,
-      () => this.isPanelNearViewport('etf-flows')
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'macro-signals',
-      () => (this.state.panels['macro-signals'] as MacroSignalsPanel).fetchData(),
-      REFRESH_INTERVALS.macroSignals,
-      () => this.isPanelNearViewport('macro-signals')
-    );
-    this.refreshScheduler.scheduleRefresh(
       'strategic-posture',
       () => (this.state.panels['strategic-posture'] as StrategicPosturePanel).refresh(),
       REFRESH_INTERVALS.strategicPosture,
@@ -1100,36 +1040,22 @@ export class App {
       () => this.isPanelNearViewport('telegram-intel')
     );
 
-    this.refreshScheduler.scheduleRefresh(
-      'gulf-economies',
-      () => (this.state.panels['gulf-economies'] as GulfEconomiesPanel).fetchData(),
-      REFRESH_INTERVALS.gulfEconomies,
-      () => this.isPanelNearViewport('gulf-economies')
-    );
 
-    this.refreshScheduler.scheduleRefresh(
-      'grocery-basket',
-      () => (this.state.panels['grocery-basket'] as GroceryBasketPanel).fetchData(),
-      REFRESH_INTERVALS.groceryBasket,
-      () => this.isPanelNearViewport('grocery-basket')
-    );
-
-    this.refreshScheduler.scheduleRefresh(
-      'bigmac',
-      () => (this.state.panels['bigmac'] as BigMacPanel).fetchData(),
-      REFRESH_INTERVALS.groceryBasket,
-      () => this.isPanelNearViewport('bigmac')
-    );
-
-    this.refreshScheduler.scheduleRefresh(
-      'fuel-prices',
-      () => (this.state.panels['fuel-prices'] as FuelPricesPanel).fetchData(),
-      REFRESH_INTERVALS.fuelPrices,
-      () => this.isPanelNearViewport('fuel-prices')
-    );
+    // Social Pulse (5 min refresh for social media feeds)
+    if (SITE_VARIANT === 'mena') {
+      this.refreshScheduler.scheduleRefresh(
+        'social-pulse',
+        async () => {
+          const panel = this.state.panels['social-pulse'] as any;
+          if (panel?.fetchData) await panel.fetchData();
+        },
+        5 * 60 * 1000,
+        () => this.isPanelNearViewport('social-pulse')
+      );
+    }
 
     // Refresh intelligence signals for CII (geopolitical variant only)
-    if (SITE_VARIANT === 'full') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'mena') {
       this.refreshScheduler.scheduleRefresh('intelligence', () => {
         const { military, iranEvents } = this.state.intelligenceCache;
         this.state.intelligenceCache = {};

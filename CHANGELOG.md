@@ -6,6 +6,57 @@ All notable changes to World Monitor are documented here.
 
 ### Added
 
+- AiAnalysisPanel: AI-generated neutral conflict analysis with risk assessment, key developments, social mood summary, and auto-refresh every 30 minutes
+- /api/ai-analysis.js: Vercel Edge Function endpoint for Groq-powered conflict situation analysis with Redis caching (30min TTL)
+- Service health diagnostic: console.table output on init showing API endpoint status for MENA variant
+- FactCheckPanel: now receives live news articles and POSTs them to /api/fact-check for real-time claim extraction (was previously broken with GET request)
+- Region selector hidden for MENA variant (locked to MENA view)
+- Map author badge hidden for MENA variant
+- en.json: updated "map" label to "MENA Situation", description to "MENA Conflict Intelligence"
+- AI Analysis panel CSS styles with risk badge, development list, social mood, and refresh controls
+
+### Fixed
+
+- FactCheckPanel was doing a GET to /api/fact-check.js (wrong URL and method) — now correctly POSTs headlines with source and side classification
+- FactCheckPanel wired into data-loader to receive fresh news articles on every refresh cycle
+- TwoSidedNewsPanel and AiAnalysisPanel also receive article updates from data-loader
+
+### Changed
+
+- MENA cleanup: stripped 39 irrelevant panels from mena variant (finance, tech, crypto, commodities, etc.)
+- CII panel now filtered to 17 MENA countries only (Iran, Israel, Iraq, Syria, Lebanon, Yemen, Saudi Arabia, UAE, Qatar, Bahrain, Kuwait, Oman, Jordan, Egypt, Turkey, Pakistan, Afghanistan)
+- Added 4 missing MENA countries to CURATED_COUNTRIES: Bahrain (BH), Kuwait (KW), Oman (OM), Jordan (JO)
+- Fixed mobile map layer picker to show MENA-specific layers instead of falling through to full variant
+- SocialPulsePanel: aggregates Reddit and X/Twitter conflict discussion via RSS (r/iran, r/Israel, r/geopolitics, Nitter OSINT feeds)
+- RSS proxy: added reddit.com, nitter.privacydev.net to allowed domains for social feeds
+- MENA branding: header shows "MENA MONITOR", variant switcher hidden, @eliehabib credit replaced with Akramovic GitHub link
+- Footer: "Built by Akramovic - Forked from World Monitor" with proper links, removed Pro/Blog/Docs/Status/Discord/X links
+- ProBanner hidden for mena variant (no "Pro is coming" banner)
+- CommunityWidget hidden for mena variant (no Discord widget)
+- MENA live streams: Al Jazeera, Al Arabiya, Sky News Arabia, France 24, DW, CNN, Sky News (removed Bloomberg/CNBC financial streams)
+- Map panel title shows "MENA Situation" instead of "Global Situation"
+- index.html JSON-LD updated with correct author (Ahmed Akram) and isBasedOn (World Monitor) metadata
+- MENA variant: new `mena` site variant for Iran-Israel conflict intelligence monitoring
+- MENA variant metadata (title, description, keywords, features) in variant-meta.ts
+- MENA panel config: 22 panels including conflict scorecard, two-sided news, fact-check, missile tracker, alliance tracker, Hormuz monitor, war timeline, public voice
+- MENA map layers: conflicts, hotspots, military, bases, flights, AIS, pipelines, waterways, nuclear, sanctions, fires, Iran attacks, GPS jamming on by default
+- 12 new RSS feeds: IRNA, Tasnim, Tehran Times, ISNA, Radio Farda (Iran-side); Times of Israel, Ynet News, Jerusalem Post, i24 News, Israel Hayom, Arutz Sheva (Israel-side); Middle East Eye (neutral)
+- SOURCE_SIDES map for two-sided news panel classification (iran/israel/neutral)
+- Propaganda risk profiles for new MENA sources (IRNA, Tasnim, ISNA, Tehran Times, Israel Hayom, Arutz Sheva, etc.)
+- Source tier ratings for all new MENA feeds
+- RSS proxy allowed domains for new MENA sources (irna.ir, tasnimnews.com, tehrantimes.com, isna.ir, radiofarda.com)
+- `/api/fact-check.js` edge function: AI fact-checking for Iran-Israel conflict claims via Groq, Redis-cached (6h TTL)
+- `/api/conflict-extract.js` edge function: structured conflict event extraction from news articles, feeds scorecard and timeline
+- `/api/conflict-score.js` edge function: returns current conflict scorecard from Redis accumulator
+- `/api/timeline-events.js` edge function: returns accumulated timeline events from Redis sorted set with pagination
+- MENA conflict keyword classification: strike, missile, interception, diplomacy, humanitarian, escalation, naval, proxy_attack, nuclear types
+- Side detection in threat classifier: identifies iran/israel/both/neutral actor in headlines
+- Factual claim detection flag on MENA articles for fact-check pipeline
+- `conflict-extraction.ts` service: fire-and-forget conflict event extraction wired into RSS news pipeline
+- ThreatClassification type extended with optional `menaConflictType`, `menaSide`, `hasFactualClaims` fields
+- Default map view centers on MENA region (lon: 45, lat: 28, zoom: 3.5) when mena variant active
+- npm scripts: `dev:mena`, `build:mena`; `dev` defaults to mena variant
+- Intelligence signal refresh enabled for mena variant (same as full)
 - US Treasury customs revenue in Trade Policy panel with monthly data, FYTD year-over-year comparison, and revenue spike highlighting (#1663)
 - Security advisories gold standard migration: Railway cron seed fetches 24 government RSS feeds hourly, Vercel reads Redis only (#1637)
 - CMD+K full panel coverage: all 55 panels now searchable (was 31), including AI forecasts, correlation panels, webcams, displacement, security advisories (#1656)

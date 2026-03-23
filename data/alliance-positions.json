@@ -1,0 +1,149 @@
+{
+  "updatedAt": "2025-01-15T12:00:00Z",
+  "positions": [
+    {
+      "country": "Syria",
+      "flag": "🇸🇾",
+      "side": "pro-iran",
+      "strength": "strong",
+      "label": "Military ally",
+      "actions": ["Hosts Iranian military advisors", "Shared air defense coordination", "Hezbollah supply corridor"]
+    },
+    {
+      "country": "Lebanon (Hezbollah)",
+      "flag": "🇱🇧",
+      "side": "pro-iran",
+      "strength": "strong",
+      "label": "Proxy force",
+      "actions": ["Cross-border rocket attacks", "IRGC-funded operations", "Southern Lebanon front"]
+    },
+    {
+      "country": "Yemen (Houthis)",
+      "flag": "🇾🇪",
+      "side": "pro-iran",
+      "strength": "strong",
+      "label": "Proxy force",
+      "actions": ["Red Sea shipping attacks", "Ballistic missile launches", "Drone strikes on Saudi/UAE"]
+    },
+    {
+      "country": "Iraq (PMF)",
+      "flag": "🇮🇶",
+      "side": "pro-iran",
+      "strength": "moderate",
+      "label": "Militia network",
+      "actions": ["Drone attacks on US bases", "Border militia coordination"]
+    },
+    {
+      "country": "Russia",
+      "flag": "🇷🇺",
+      "side": "pro-iran",
+      "strength": "cautious",
+      "label": "Strategic partner",
+      "actions": ["Arms sales to Iran", "UN veto support", "Intelligence sharing"]
+    },
+    {
+      "country": "China",
+      "flag": "🇨🇳",
+      "side": "pro-iran",
+      "strength": "cautious",
+      "label": "Economic partner",
+      "actions": ["Oil imports despite sanctions", "Infrastructure investments", "Diplomatic support"]
+    },
+    {
+      "country": "United States",
+      "flag": "🇺🇸",
+      "side": "pro-israel",
+      "strength": "strong",
+      "label": "Primary ally",
+      "actions": ["$3.8B annual military aid", "Iron Dome support", "Carrier strike group deployments"]
+    },
+    {
+      "country": "United Kingdom",
+      "flag": "🇬🇧",
+      "side": "pro-israel",
+      "strength": "moderate",
+      "label": "Strategic partner",
+      "actions": ["Intelligence sharing", "Diplomatic support", "Arms sales"]
+    },
+    {
+      "country": "Germany",
+      "flag": "🇩🇪",
+      "side": "pro-israel",
+      "strength": "moderate",
+      "label": "Security partner",
+      "actions": ["Submarine deliveries", "Diplomatic support", "Holocaust remembrance commitment"]
+    },
+    {
+      "country": "Saudi Arabia",
+      "flag": "🇸🇦",
+      "side": "pro-israel",
+      "strength": "cautious",
+      "label": "Normalizing relations",
+      "actions": ["Abraham Accords interest", "Anti-Iran coalition", "Quiet intelligence sharing"]
+    },
+    {
+      "country": "UAE",
+      "flag": "🇦🇪",
+      "side": "pro-israel",
+      "strength": "moderate",
+      "label": "Normalized relations",
+      "actions": ["Abraham Accords signatory", "Trade agreements", "Defense cooperation"]
+    },
+    {
+      "country": "Bahrain",
+      "flag": "🇧🇭",
+      "side": "pro-israel",
+      "strength": "moderate",
+      "label": "Normalized relations",
+      "actions": ["Abraham Accords signatory", "Naval cooperation", "Anti-Iran stance"]
+    },
+    {
+      "country": "Turkey",
+      "flag": "🇹🇷",
+      "side": "neutral",
+      "strength": "moderate",
+      "label": "Independent mediator",
+      "actions": ["Criticized both sides", "NATO member but independent", "Offered mediation"]
+    },
+    {
+      "country": "Qatar",
+      "flag": "🇶🇦",
+      "side": "neutral",
+      "strength": "moderate",
+      "label": "Mediator",
+      "actions": ["Hosts Hamas political bureau", "US base host", "Mediation channel"]
+    },
+    {
+      "country": "Oman",
+      "flag": "🇴🇲",
+      "side": "neutral",
+      "strength": "moderate",
+      "label": "Back-channel diplomat",
+      "actions": ["Historic Iran-US intermediary", "Non-aligned stance", "Quiet diplomacy"]
+    },
+    {
+      "country": "Jordan",
+      "flag": "🇯🇴",
+      "side": "neutral",
+      "strength": "cautious",
+      "label": "Balancing act",
+      "actions": ["Peace treaty with Israel", "Hosts Palestinian refugees", "Shot down Iranian drones"]
+    },
+    {
+      "country": "Egypt",
+      "flag": "🇪🇬",
+      "side": "neutral",
+      "strength": "moderate",
+      "label": "Regional stabilizer",
+      "actions": ["Camp David peace treaty", "Gaza border control", "Ceasefire mediator"]
+    },
+    {
+      "country": "India",
+      "flag": "🇮🇳",
+      "side": "neutral",
+      "strength": "cautious",
+      "label": "Multi-aligned",
+      "actions": ["Defense ties with Israel", "Oil imports from Iran", "Non-aligned position"]
+    }
+  ]
+}

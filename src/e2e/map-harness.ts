@@ -14,19 +14,21 @@ import {
   STRATEGIC_WATERWAYS,
   ECONOMIC_CENTERS,
   AI_DATA_CENTERS,
-  STARTUP_HUBS,
-  ACCELERATORS,
-  TECH_HQS,
-  CLOUD_REGIONS,
   PORTS,
   SPACEPORTS,
   APT_GROUPS,
   CRITICAL_MINERALS,
-  STOCK_EXCHANGES,
-  FINANCIAL_CENTERS,
-  CENTRAL_BANKS,
-  COMMODITY_HUBS,
 } from '../config';
+
+// Stubs for removed variant-specific config
+const STARTUP_HUBS: any[] = [];
+const ACCELERATORS: any[] = [];
+const TECH_HQS: any[] = [];
+const CLOUD_REGIONS: any[] = [];
+const STOCK_EXCHANGES: any[] = [];
+const FINANCIAL_CENTERS: any[] = [];
+const CENTRAL_BANKS: any[] = [];
+const COMMODITY_HUBS: any[] = [];
 import type {
   AisDensityZone,
   AisDisruptionEvent,

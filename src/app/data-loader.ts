@@ -120,28 +120,13 @@ import type { GetSectorSummaryResponse, ListMarketQuotesResponse } from '@/gener
 import { mountCommunityWidget } from '@/components/CommunityWidget';
 import { ResearchServiceClient } from '@/generated/client/worldmonitor/research/v1/service_client';
 import {
-  MarketPanel,
-  StockAnalysisPanel,
-  StockBacktestPanel,
-  HeatmapPanel,
-  CommoditiesPanel,
-  CryptoPanel,
-  CryptoHeatmapPanel,
-  DefiTokensPanel,
-  AiTokensPanel,
-  OtherTokensPanel,
   PredictionPanel,
   MonitorPanel,
   InsightsPanel,
   CIIPanel,
   InternetDisruptionsPanel,
   StrategicPosturePanel,
-  EconomicPanel,
-  EnergyComplexPanel,
-  TechReadinessPanel,
   UcdpEventsPanel,
-  TradePolicyPanel,
-  SupplyChainPanel,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { classifyNewsItem } from '@/services/positive-classifier';
@@ -504,7 +489,7 @@ export class DataLoaderManager implements AppModule {
     }
 
     if (SITE_VARIANT !== 'happy') {
-      tasks.push({ name: 'techReadiness', task: runGuarded('techReadiness', () => (this.ctx.panels['tech-readiness'] as TechReadinessPanel)?.refresh()) });
+      tasks.push({ name: 'techReadiness', task: runGuarded('techReadiness', () => (this.ctx.panels['tech-readiness'] as any)?.refresh()) });
     }
     if (SITE_VARIANT !== 'happy' && shouldLoad('thermal-escalation')) {
       tasks.push({ name: 'thermalEscalation', task: runGuarded('thermalEscalation', () => this.loadThermalEscalations()) });
@@ -1068,11 +1053,21 @@ export class DataLoaderManager implements AppModule {
 
     this.ctx.allNews = collectedNews;
     this.ctx.initialLoadComplete = true;
-    mountCommunityWidget();
+    if (SITE_VARIANT !== 'mena') mountCommunityWidget();
 
     this.ctx.map?.updateHotspotActivity(this.ctx.allNews);
 
     this.updateMonitorResults();
+
+    // Wire MENA-specific panels with fresh news
+    if (SITE_VARIANT === 'mena') {
+      const twoSided = this.ctx.panels['two-sided-news'] as { update?: (articles: NewsItem[]) => void } | undefined;
+      twoSided?.update?.(this.ctx.allNews);
+      const factCheck = this.ctx.panels['fact-check'] as { updateArticles?: (articles: NewsItem[]) => void } | undefined;
+      factCheck?.updateArticles?.(this.ctx.allNews);
+      const aiAnalysis = this.ctx.panels['ai-analysis'] as { updateArticles?: (articles: NewsItem[]) => void } | undefined;
+      aiAnalysis?.updateArticles?.(this.ctx.allNews);
+    }
 
     try {
       this.ctx.latestClusters = mlWorker.isAvailable
@@ -1111,7 +1106,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadStockAnalysis(): Promise<void> {
-    const panel = this.ctx.panels['stock-analysis'] as StockAnalysisPanel | undefined;
+    const panel = this.ctx.panels['stock-analysis'] as any | undefined;
     if (!panel) return;
 
     try {
@@ -1151,7 +1146,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadStockBacktest(): Promise<void> {
-    const panel = this.ctx.panels['stock-backtest'] as StockBacktestPanel | undefined;
+    const panel = this.ctx.panels['stock-backtest'] as any | undefined;
     if (!panel) return;
 
     try {
@@ -1207,7 +1202,7 @@ export class DataLoaderManager implements AppModule {
       // Hydrate markets from bootstrap (same pattern as sectors) — instant data on page load
       const hydratedMarkets = getHydratedData('marketQuotes') as ListMarketQuotesResponse | undefined;
       let stocksResult: Awaited<ReturnType<typeof fetchMultipleStocks>>;
-      const marketsPanel = this.ctx.panels['markets'] as MarketPanel | undefined;
+      const marketsPanel = this.ctx.panels['markets'] as any | undefined;
 
       if (customEntries.length === 0 && hydratedMarkets?.quotes?.length) {
         const symbolMetaMap = new Map(effectiveSymbols.map((s) => [s.symbol, s]));
@@ -1249,7 +1244,7 @@ export class DataLoaderManager implements AppModule {
 
       // Sector heatmap: always attempt loading regardless of market rate-limit status
       const hydratedSectors = getHydratedData('sectors') as GetSectorSummaryResponse | undefined;
-      const heatmapPanel = this.ctx.panels['heatmap'] as HeatmapPanel | undefined;
+      const heatmapPanel = this.ctx.panels['heatmap'] as any | undefined;
       if (hydratedSectors?.sectors?.length) {
         const mapped = hydratedSectors.sectors.map((s) => ({ name: s.name, change: s.change }));
         heatmapPanel?.renderHeatmap(mapped);
@@ -1271,8 +1266,8 @@ export class DataLoaderManager implements AppModule {
         this.ctx.panels['heatmap']?.showConfigError(finnhubConfigMsg);
       }
 
-      const commoditiesPanel = this.ctx.panels['commodities'] as CommoditiesPanel | undefined;
-      const energyPanel = this.ctx.panels['energy-complex'] as EnergyComplexPanel | undefined;
+      const commoditiesPanel = this.ctx.panels['commodities'] as any | undefined;
+      const energyPanel = this.ctx.panels['energy-complex'] as any | undefined;
       const mapCommodity = (c: MarketData) => ({ display: c.display, price: c.price, change: c.change, sparkline: c.sparkline });
       const energySymbols = new Set(['CL=F', 'BZ=F', 'NG=F']);
       const filterCommodityTape = (data: MarketData[]) => data.filter((item) => item.symbol !== '^VIX' && !energySymbols.has(item.symbol));
@@ -1336,7 +1331,7 @@ export class DataLoaderManager implements AppModule {
     }
 
     try {
-      const cryptoPanel = this.ctx.panels['crypto'] as CryptoPanel | undefined;
+      const cryptoPanel = this.ctx.panels['crypto'] as any | undefined;
       const crypto = await fetchCrypto();
       cryptoPanel?.renderCrypto(crypto);
       this.ctx.statusPanel?.updateApi('CoinGecko', { status: crypto.length > 0 ? 'ok' : 'error' });
@@ -1344,10 +1339,10 @@ export class DataLoaderManager implements AppModule {
       this.ctx.statusPanel?.updateApi('CoinGecko', { status: 'error' });
     }
 
-    const cryptoHeatmapPanel = this.ctx.panels['crypto-heatmap'] as CryptoHeatmapPanel | undefined;
-    const defiPanel = this.ctx.panels['defi-tokens'] as DefiTokensPanel | undefined;
-    const aiPanel = this.ctx.panels['ai-tokens'] as AiTokensPanel | undefined;
-    const otherPanel = this.ctx.panels['other-tokens'] as OtherTokensPanel | undefined;
+    const cryptoHeatmapPanel = this.ctx.panels['crypto-heatmap'] as any | undefined;
+    const defiPanel = this.ctx.panels['defi-tokens'] as any | undefined;
+    const aiPanel = this.ctx.panels['ai-tokens'] as any | undefined;
+    const otherPanel = this.ctx.panels['other-tokens'] as any | undefined;
 
     if (cryptoHeatmapPanel || defiPanel || aiPanel || otherPanel) {
       try {
@@ -2293,7 +2288,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadFredData(): Promise<void> {
-    const economicPanel = this.ctx.panels['economic'] as EconomicPanel;
+    const economicPanel = this.ctx.panels['economic'] as any;
     const cbInfo = getCircuitBreakerCooldownInfo('FRED Batch');
     if (cbInfo.onCooldown) {
       economicPanel?.setFredRetrying(cbInfo.remainingSeconds);
@@ -2333,7 +2328,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadOilAnalytics(): Promise<void> {
-    const energyPanel = this.ctx.panels['energy-complex'] as EnergyComplexPanel | undefined;
+    const energyPanel = this.ctx.panels['energy-complex'] as any | undefined;
     try {
       const data = await fetchOilAnalytics();
       energyPanel?.updateAnalytics(data);
@@ -2353,7 +2348,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadGovernmentSpending(): Promise<void> {
-    const economicPanel = this.ctx.panels['economic'] as EconomicPanel;
+    const economicPanel = this.ctx.panels['economic'] as any;
     try {
       const data = await fetchRecentAwards();
       economicPanel?.updateSpending(data);
@@ -2371,7 +2366,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadBisData(): Promise<void> {
-    const economicPanel = this.ctx.panels['economic'] as EconomicPanel;
+    const economicPanel = this.ctx.panels['economic'] as any;
     try {
       const data = await fetchBisData();
       economicPanel?.updateBis(data);
@@ -2388,7 +2383,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadBlsData(): Promise<void> {
-    const economicPanel = this.ctx.panels['economic'] as EconomicPanel;
+    const economicPanel = this.ctx.panels['economic'] as any;
     try {
       const data = await fetchBlsData();
       if (data.length > 0) {
@@ -2406,7 +2401,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadTradePolicy(): Promise<void> {
-    const tradePanel = this.ctx.panels['trade-policy'] as TradePolicyPanel | undefined;
+    const tradePanel = this.ctx.panels['trade-policy'] as any | undefined;
     if (!tradePanel) return;
 
     try {
@@ -2454,7 +2449,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadSupplyChain(): Promise<void> {
-    const scPanel = this.ctx.panels['supply-chain'] as SupplyChainPanel | undefined;
+    const scPanel = this.ctx.panels['supply-chain'] as any | undefined;
     if (!scPanel) return;
 
     try {

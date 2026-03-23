@@ -278,6 +278,139 @@ const SHORT_KEYWORDS = new Set([
   'virus', 'disease', 'flood', 'strikes',
 ]);
 
+// ======================================================================
+// MENA conflict-specific keyword maps (mena variant only)
+// ======================================================================
+
+type MenaConflictType =
+  | 'strike' | 'missile' | 'interception' | 'diplomacy' | 'humanitarian'
+  | 'escalation' | 'naval' | 'proxy_attack' | 'cyber' | 'nuclear';
+
+type MenaSide = 'iran' | 'israel' | 'both' | 'neutral';
+
+interface MenaKeywordResult {
+  conflictType: MenaConflictType;
+  side: MenaSide;
+  hasFactualClaims: boolean;
+}
+
+const MENA_CONFLICT_KEYWORDS: Array<{ pattern: string; type: MenaConflictType; side: MenaSide; claims: boolean }> = [
+  // Strike events
+  { pattern: 'airstrike on iran', type: 'strike', side: 'israel', claims: true },
+  { pattern: 'airstrikes on iran', type: 'strike', side: 'israel', claims: true },
+  { pattern: 'strikes on iran', type: 'strike', side: 'israel', claims: true },
+  { pattern: 'strike on israel', type: 'strike', side: 'iran', claims: true },
+  { pattern: 'strikes on israel', type: 'strike', side: 'iran', claims: true },
+  { pattern: 'airstrike on israel', type: 'strike', side: 'iran', claims: true },
+  { pattern: 'iran strikes', type: 'strike', side: 'iran', claims: true },
+  { pattern: 'israel strikes', type: 'strike', side: 'israel', claims: true },
+  { pattern: 'idf strikes', type: 'strike', side: 'israel', claims: true },
+  { pattern: 'irgc strikes', type: 'strike', side: 'iran', claims: true },
+
+  // Missile events
+  { pattern: 'ballistic missile', type: 'missile', side: 'both', claims: true },
+  { pattern: 'cruise missile', type: 'missile', side: 'both', claims: true },
+  { pattern: 'missile launch', type: 'missile', side: 'both', claims: true },
+  { pattern: 'missiles fired', type: 'missile', side: 'both', claims: true },
+  { pattern: 'rocket attack', type: 'missile', side: 'both', claims: true },
+  { pattern: 'drone strike', type: 'missile', side: 'both', claims: true },
+  { pattern: 'drone attack', type: 'missile', side: 'both', claims: true },
+
+  // Interception events
+  { pattern: 'iron dome', type: 'interception', side: 'israel', claims: true },
+  { pattern: 'arrow intercepted', type: 'interception', side: 'israel', claims: true },
+  { pattern: 'intercepted missile', type: 'interception', side: 'both', claims: true },
+  { pattern: 'air defense intercepted', type: 'interception', side: 'both', claims: true },
+  { pattern: 'shot down drone', type: 'interception', side: 'both', claims: true },
+
+  // Diplomacy
+  { pattern: 'ceasefire', type: 'diplomacy', side: 'both', claims: false },
+  { pattern: 'peace talks', type: 'diplomacy', side: 'both', claims: false },
+  { pattern: 'nuclear deal', type: 'diplomacy', side: 'both', claims: false },
+  { pattern: 'jcpoa', type: 'diplomacy', side: 'both', claims: false },
+  { pattern: 'diplomatic channel', type: 'diplomacy', side: 'both', claims: false },
+  { pattern: 'de-escalation', type: 'diplomacy', side: 'both', claims: false },
+
+  // Humanitarian
+  { pattern: 'civilian casualties', type: 'humanitarian', side: 'both', claims: true },
+  { pattern: 'humanitarian crisis', type: 'humanitarian', side: 'both', claims: true },
+  { pattern: 'displaced', type: 'humanitarian', side: 'both', claims: true },
+  { pattern: 'aid blocked', type: 'humanitarian', side: 'both', claims: true },
+  { pattern: 'refugee', type: 'humanitarian', side: 'both', claims: true },
+
+  // Escalation
+  { pattern: 'military escalation', type: 'escalation', side: 'both', claims: true },
+  { pattern: 'retaliatory', type: 'escalation', side: 'both', claims: true },
+  { pattern: 'retaliation', type: 'escalation', side: 'both', claims: true },
+  { pattern: 'all-out war', type: 'escalation', side: 'both', claims: true },
+  { pattern: 'full-scale', type: 'escalation', side: 'both', claims: true },
+  { pattern: 'ground invasion', type: 'escalation', side: 'both', claims: true },
+
+  // Naval
+  { pattern: 'strait of hormuz', type: 'naval', side: 'both', claims: true },
+  { pattern: 'hormuz', type: 'naval', side: 'iran', claims: true },
+  { pattern: 'red sea', type: 'naval', side: 'both', claims: true },
+  { pattern: 'tanker seized', type: 'naval', side: 'iran', claims: true },
+  { pattern: 'shipping disruption', type: 'naval', side: 'both', claims: true },
+  { pattern: 'naval blockade', type: 'naval', side: 'both', claims: true },
+
+  // Proxy attacks
+  { pattern: 'hezbollah', type: 'proxy_attack', side: 'iran', claims: true },
+  { pattern: 'houthi', type: 'proxy_attack', side: 'iran', claims: true },
+  { pattern: 'houthis', type: 'proxy_attack', side: 'iran', claims: true },
+  { pattern: 'iraqi militia', type: 'proxy_attack', side: 'iran', claims: true },
+  { pattern: 'islamic jihad', type: 'proxy_attack', side: 'iran', claims: true },
+  { pattern: 'hamas', type: 'proxy_attack', side: 'iran', claims: true },
+
+  // Nuclear
+  { pattern: 'uranium enrichment', type: 'nuclear', side: 'iran', claims: true },
+  { pattern: 'nuclear facility', type: 'nuclear', side: 'iran', claims: true },
+  { pattern: 'natanz', type: 'nuclear', side: 'iran', claims: true },
+  { pattern: 'fordow', type: 'nuclear', side: 'iran', claims: true },
+  { pattern: 'dimona', type: 'nuclear', side: 'israel', claims: true },
+  { pattern: 'nuclear weapon', type: 'nuclear', side: 'both', claims: true },
+];
+
+// MENA-specific side detection keywords
+const IRAN_SIDE_KEYWORDS = [
+  'iran', 'iranian', 'tehran', 'irgc', 'ayatollah', 'khamenei', 'rouhani',
+  'raisi', 'isfahan', 'tabriz', 'qom', 'persian gulf',
+];
+
+const ISRAEL_SIDE_KEYWORDS = [
+  'israel', 'israeli', 'idf', 'tel aviv', 'jerusalem', 'netanyahu',
+  'knesset', 'mossad', 'shin bet', 'negev', 'haifa',
+];
+
+function classifyMenaConflict(lower: string): MenaKeywordResult | null {
+  for (const kw of MENA_CONFLICT_KEYWORDS) {
+    if (lower.includes(kw.pattern)) {
+      let side = kw.side;
+      // Refine side detection from context
+      if (side === 'both') {
+        const hasIran = IRAN_SIDE_KEYWORDS.some(k => lower.includes(k));
+        const hasIsrael = ISRAEL_SIDE_KEYWORDS.some(k => lower.includes(k));
+        if (hasIran && !hasIsrael) side = 'iran';
+        else if (hasIsrael && !hasIran) side = 'israel';
+      }
+      return { conflictType: kw.type, side, hasFactualClaims: kw.claims };
+    }
+  }
+
+  // General MENA relevance check — detect side even without specific conflict type
+  const hasIran = IRAN_SIDE_KEYWORDS.some(k => lower.includes(k));
+  const hasIsrael = ISRAEL_SIDE_KEYWORDS.some(k => lower.includes(k));
+  if (hasIran || hasIsrael) {
+    return {
+      conflictType: 'strike', // generic conflict
+      side: hasIran && hasIsrael ? 'both' : hasIran ? 'iran' : 'israel',
+      hasFactualClaims: false,
+    };
+  }
+
+  return null;
+}
+
 const TRAILING_BOUNDARY_KEYWORDS = new Set([
   'attack iran', 'attacked iran', 'attack on iran', 'attack against iran',
   'attacks on iran', 'launch attacks on iran', 'launch attack on iran',
@@ -334,42 +467,57 @@ export function classifyByKeyword(title: string, variant = 'full'): ThreatClassi
   }
 
   const isTech = variant === 'tech';
+  const isMena = variant === 'mena' || variant === 'middleeast';
 
   // Priority cascade: critical → high → medium → low → info
   let match = matchKeywords(lower, CRITICAL_KEYWORDS);
-  if (match) return { level: 'critical', category: match.category, confidence: 0.9, source: 'keyword' };
+  if (match) {
+    return enrichMena({ level: 'critical', category: match.category, confidence: 0.9, source: 'keyword' }, lower, isMena);
+  }
 
   match = matchKeywords(lower, HIGH_KEYWORDS);
   if (match) {
     // Compound escalation: military action + critical geopolitical target → CRITICAL
     if (shouldEscalateToCritical(lower, match.category)) {
-      return { level: 'critical', category: match.category, confidence: 0.85, source: 'keyword' };
+      return enrichMena({ level: 'critical', category: match.category, confidence: 0.85, source: 'keyword' }, lower, isMena);
     }
-    return { level: 'high', category: match.category, confidence: 0.8, source: 'keyword' };
+    return enrichMena({ level: 'high', category: match.category, confidence: 0.8, source: 'keyword' }, lower, isMena);
   }
 
   if (isTech) {
     match = matchKeywords(lower, TECH_HIGH_KEYWORDS);
-    if (match) return { level: 'high', category: match.category, confidence: 0.75, source: 'keyword' };
+    if (match) return enrichMena({ level: 'high', category: match.category, confidence: 0.75, source: 'keyword' }, lower, isMena);
   }
 
   match = matchKeywords(lower, MEDIUM_KEYWORDS);
-  if (match) return { level: 'medium', category: match.category, confidence: 0.7, source: 'keyword' };
+  if (match) return enrichMena({ level: 'medium', category: match.category, confidence: 0.7, source: 'keyword' }, lower, isMena);
 
   if (isTech) {
     match = matchKeywords(lower, TECH_MEDIUM_KEYWORDS);
-    if (match) return { level: 'medium', category: match.category, confidence: 0.65, source: 'keyword' };
+    if (match) return enrichMena({ level: 'medium', category: match.category, confidence: 0.65, source: 'keyword' }, lower, isMena);
   }
 
   match = matchKeywords(lower, LOW_KEYWORDS);
-  if (match) return { level: 'low', category: match.category, confidence: 0.6, source: 'keyword' };
+  if (match) return enrichMena({ level: 'low', category: match.category, confidence: 0.6, source: 'keyword' }, lower, isMena);
 
   if (isTech) {
     match = matchKeywords(lower, TECH_LOW_KEYWORDS);
-    if (match) return { level: 'low', category: match.category, confidence: 0.55, source: 'keyword' };
+    if (match) return enrichMena({ level: 'low', category: match.category, confidence: 0.55, source: 'keyword' }, lower, isMena);
   }
 
-  return { level: 'info', category: 'general', confidence: 0.3, source: 'keyword' };
+  return enrichMena({ level: 'info', category: 'general', confidence: 0.3, source: 'keyword' }, lower, isMena);
+}
+
+/** Add MENA conflict enrichment fields when variant is mena */
+function enrichMena(result: ThreatClassification, lower: string, isMena: boolean): ThreatClassification {
+  if (!isMena) return result;
+  const menaResult = classifyMenaConflict(lower);
+  if (menaResult) {
+    result.menaConflictType = menaResult.conflictType;
+    result.menaSide = menaResult.side;
+    result.hasFactualClaims = menaResult.hasFactualClaims;
+  }
+  return result;
 }
 
 // Batched AI classification — collects headlines then fires parallel classifyEvent RPCs

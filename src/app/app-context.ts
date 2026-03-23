@@ -66,14 +66,14 @@ export interface AppContext {
   countryBriefPage: import('@/components/CountryBriefPanel').CountryBriefPanel | null;
   countryTimeline: import('@/components/CountryTimeline').CountryTimeline | null;
 
-  positivePanel: import('@/components/PositiveNewsFeedPanel').PositiveNewsFeedPanel | null;
-  countersPanel: import('@/components/CountersPanel').CountersPanel | null;
-  progressPanel: import('@/components/ProgressChartsPanel').ProgressChartsPanel | null;
-  breakthroughsPanel: import('@/components/BreakthroughsTickerPanel').BreakthroughsTickerPanel | null;
-  heroPanel: import('@/components/HeroSpotlightPanel').HeroSpotlightPanel | null;
-  digestPanel: import('@/components/GoodThingsDigestPanel').GoodThingsDigestPanel | null;
-  speciesPanel: import('@/components/SpeciesComebackPanel').SpeciesComebackPanel | null;
-  renewablePanel: import('@/components/RenewableEnergyPanel').RenewableEnergyPanel | null;
+  positivePanel: null;
+  countersPanel: null;
+  progressPanel: null;
+  breakthroughsPanel: null;
+  heroPanel: null;
+  digestPanel: null;
+  speciesPanel: null;
+  renewablePanel: null;
   tvMode: import('@/services/tv-mode').TvModeController | null;
   happyAllItems: NewsItem[];
   isDestroyed: boolean;
