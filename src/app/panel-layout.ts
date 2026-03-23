@@ -195,7 +195,7 @@ export class PanelLayoutManager implements AppModule {
           </button>
         </div>
         <div class="header-right">
-          ${this.ctx.isDesktopApp ? '' : `<div class="download-wrapper" id="downloadWrapper">
+          ${this.ctx.isDesktopApp || SITE_VARIANT === 'mena' ? '' : `<div class="download-wrapper" id="downloadWrapper">
             <button class="download-btn" id="downloadBtn" title="${t('header.downloadApp')}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span id="downloadBtnLabel">${t('header.downloadApp')}</span>
@@ -516,7 +516,7 @@ export class PanelLayoutManager implements AppModule {
     this.ctx.map = new MapContainer(mapContainer, {
       zoom: this.ctx.isMobile ? 2.5 : 1.0,
       pan: { x: 0, y: 0 },
-      view: this.ctx.isMobile ? this.ctx.resolvedLocation : (SITE_VARIANT === 'mena' ? 'mena' : 'global'),
+      view: SITE_VARIANT === 'mena' ? 'mena' : (this.ctx.isMobile ? this.ctx.resolvedLocation : 'global'),
       layers: this.ctx.mapLayers,
       timeRange: '7d',
     }, preferGlobe);

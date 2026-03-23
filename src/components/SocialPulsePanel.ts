@@ -1,6 +1,6 @@
 import { Panel } from './Panel';
 import { h, replaceChildren } from '@/utils/dom-utils';
-import { escapeHtml } from '@/utils/sanitize';
+import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
 import { rssProxyUrl } from '@/utils';
 import { t } from '@/services/i18n';
 
@@ -21,7 +21,6 @@ interface SocialPost {
   platform: SocialPlatform;
   side: SocialSide;
   timestamp: number;
-  engagement?: string;
 }
 
 const REDDIT_FEEDS: SocialFeedSource[] = [
@@ -71,7 +70,6 @@ export class SocialPulsePanel extends Panel {
     try {
       const results = await this.fetchAllFeeds(ALL_FEEDS);
 
-      // If we got very few results, try fallback feeds
       if (results.length < 3 && !this.usedFallback) {
         this.usedFallback = true;
         const fallbackResults = await this.fetchAllFeeds(FALLBACK_FEEDS);
@@ -86,7 +84,9 @@ export class SocialPulsePanel extends Panel {
       this.render();
     } catch (err) {
       console.warn('[SocialPulse] fetch failed:', err);
-      this.setContent(`<div class="panel-empty">Social feeds temporarily unavailable</div>`);
+      replaceChildren(this.content,
+        h('div', { className: 'sp-empty' }, 'Social feeds temporarily unavailable'),
+      );
     } finally {
       this.fetchInFlight = false;
     }
@@ -118,7 +118,7 @@ export class SocialPulsePanel extends Panel {
       const parser = new DOMParser();
       const doc = parser.parseFromString(xml, 'text/xml');
 
-      // Try Atom format first (Reddit uses Atom)
+      // Atom format (Reddit)
       const entries = doc.querySelectorAll('entry');
       if (entries.length > 0) {
         for (const entry of entries) {
@@ -127,8 +127,7 @@ export class SocialPulsePanel extends Panel {
           const updated = entry.querySelector('updated')?.textContent;
           if (!title || !link) continue;
           posts.push({
-            title,
-            link,
+            title, link,
             source: feed.name,
             platform: feed.platform,
             side: feed.side,
@@ -138,7 +137,7 @@ export class SocialPulsePanel extends Panel {
         return posts;
       }
 
-      // Try RSS 2.0 format
+      // RSS 2.0 format
       const items = doc.querySelectorAll('item');
       for (const item of items) {
         const title = item.querySelector('title')?.textContent?.trim();
@@ -146,8 +145,7 @@ export class SocialPulsePanel extends Panel {
         const pubDate = item.querySelector('pubDate')?.textContent;
         if (!title || !link) continue;
         posts.push({
-          title,
-          link,
+          title, link,
           source: feed.name,
           platform: feed.platform,
           side: feed.side,
@@ -170,16 +168,85 @@ export class SocialPulsePanel extends Panel {
     return `${Math.floor(hours / 24)}d`;
   }
 
-  private getSideBadge(side: SocialSide): string {
-    switch (side) {
-      case 'iran': return '<span class="social-side-badge social-side-iran" title="Iran-related">IR</span>';
-      case 'israel': return '<span class="social-side-badge social-side-israel" title="Israel-related">IL</span>';
-      default: return '<span class="social-side-badge social-side-neutral" title="Neutral">N</span>';
-    }
+  private buildSideBadge(side: SocialSide): HTMLElement {
+    const labels: Record<SocialSide, string> = { iran: 'IR', israel: 'IL', neutral: 'N' };
+    return h('span', { className: `sp-side-badge sp-side-badge--${side}` }, labels[side]);
   }
 
-  private getPlatformIcon(platform: SocialPlatform): string {
-    return platform === 'reddit' ? 'R' : 'X';
+  private buildPlatformIcon(platform: SocialPlatform): HTMLElement {
+    return h('span', { className: `sp-platform sp-platform--${platform}` },
+      platform === 'reddit' ? 'R' : 'X',
+    );
+  }
+
+  private buildPostCard(post: SocialPost): HTMLElement {
+    return h('div', { className: `sp-post sp-post--${post.side}` },
+      h('div', { className: 'sp-post-header' },
+        this.buildPlatformIcon(post.platform),
+        h('span', { className: 'sp-post-source' }, escapeHtml(post.source)),
+        this.buildSideBadge(post.side),
+        h('span', { className: 'sp-post-time' }, this.formatRelativeTime(post.timestamp)),
+      ),
+      h('a', {
+        className: 'sp-post-title',
+        href: sanitizeUrl(post.link),
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      }, escapeHtml(post.title)),
+    );
+  }
+
+  private buildSentimentBar(filtered: SocialPost[]): HTMLElement {
+    const total = filtered.length || 1;
+    const iranCount = filtered.filter(p => p.side === 'iran').length;
+    const israelCount = filtered.filter(p => p.side === 'israel').length;
+    const neutralCount = filtered.filter(p => p.side === 'neutral').length;
+
+    const iranPct = Math.round((iranCount / total) * 100);
+    const israelPct = Math.round((israelCount / total) * 100);
+    const neutralPct = 100 - iranPct - israelPct;
+
+    return h('div', { className: 'sp-sentiment' },
+      h('div', { className: 'sp-sentiment-bar' },
+        ...(iranPct > 0 ? [h('div', {
+          className: 'sp-sentiment-seg sp-sentiment-seg--iran',
+          style: `width:${iranPct}%`,
+        })] : []),
+        ...(neutralPct > 0 ? [h('div', {
+          className: 'sp-sentiment-seg sp-sentiment-seg--neutral',
+          style: `width:${neutralPct}%`,
+        })] : []),
+        ...(israelPct > 0 ? [h('div', {
+          className: 'sp-sentiment-seg sp-sentiment-seg--israel',
+          style: `width:${israelPct}%`,
+        })] : []),
+      ),
+      h('div', { className: 'sp-sentiment-labels' },
+        h('span', { className: 'sp-sentiment-label sp-sentiment-label--iran' },
+          h('span', { className: 'sp-sentiment-dot sp-sentiment-dot--iran' }),
+          `Iran ${iranCount}`,
+        ),
+        h('span', { className: 'sp-sentiment-label sp-sentiment-label--neutral' },
+          h('span', { className: 'sp-sentiment-dot sp-sentiment-dot--neutral' }),
+          `Neutral ${neutralCount}`,
+        ),
+        h('span', { className: 'sp-sentiment-label sp-sentiment-label--israel' },
+          h('span', { className: 'sp-sentiment-dot sp-sentiment-dot--israel' }),
+          `Israel ${israelCount}`,
+        ),
+      ),
+    );
+  }
+
+  private buildTab(filter: TabFilter, label: string, count: number): HTMLElement {
+    const tab = h('button', {
+      className: `sp-tab ${this.activeTab === filter ? 'sp-tab--active' : ''}`,
+    }, `${label} (${count})`);
+    tab.addEventListener('click', () => {
+      this.activeTab = filter;
+      this.render();
+    });
+    return tab;
   }
 
   private render(): void {
@@ -187,88 +254,33 @@ export class SocialPulsePanel extends Panel {
       ? this.posts
       : this.posts.filter(p => p.platform === this.activeTab);
 
-    if (filtered.length === 0) {
-      this.setContent(`<div class="panel-empty">No social posts available</div>`);
+    const allCount = this.posts.length;
+    const redditCount = this.posts.filter(p => p.platform === 'reddit').length;
+    const twitterCount = this.posts.filter(p => p.platform === 'twitter').length;
+
+    if (this.posts.length === 0) {
+      replaceChildren(this.content,
+        h('div', { className: 'sp-empty' }, 'No social posts available'),
+      );
       return;
     }
 
-    // Tab bar
-    const tabBar = h('div', { className: 'social-tabs' },
-      this.createTab('all', 'All'),
-      this.createTab('reddit', 'Reddit'),
-      this.createTab('twitter', 'X'),
+    const tabBar = h('div', { className: 'sp-tabs' },
+      this.buildTab('all', 'All', allCount),
+      this.buildTab('reddit', 'Reddit', redditCount),
+      this.buildTab('twitter', 'X', twitterCount),
     );
 
-    // Sentiment summary
-    const iranCount = filtered.filter(p => p.side === 'iran').length;
-    const israelCount = filtered.filter(p => p.side === 'israel').length;
-    const neutralCount = filtered.filter(p => p.side === 'neutral').length;
-    const total = filtered.length;
+    const postList = h('div', { className: 'sp-posts' },
+      ...filtered.map(post => this.buildPostCard(post)),
+    );
 
-    const sentimentBar = h('div', { className: 'social-sentiment' },
-      h('div', { className: 'social-sentiment-bar' },
-        h('div', {
-          className: 'social-sentiment-segment social-sentiment-iran',
-          style: `width:${Math.round((iranCount / total) * 100)}%`,
-        }),
-        h('div', {
-          className: 'social-sentiment-segment social-sentiment-neutral',
-          style: `width:${Math.round((neutralCount / total) * 100)}%`,
-        }),
-        h('div', {
-          className: 'social-sentiment-segment social-sentiment-israel',
-          style: `width:${Math.round((israelCount / total) * 100)}%`,
-        }),
-      ),
-      h('div', { className: 'social-sentiment-labels' },
-        h('span', {}, `Iran: ${iranCount}`),
-        h('span', {}, `Neutral: ${neutralCount}`),
-        h('span', {}, `Israel: ${israelCount}`),
+    replaceChildren(this.content,
+      h('div', { className: 'sp-content' },
+        tabBar,
+        this.buildSentimentBar(filtered),
+        postList,
       ),
     );
-
-    // Post list
-    const postList = h('div', { className: 'social-posts' },
-      ...filtered.map(post => {
-        const row = h('div', { className: `social-post social-post-${post.side}` },
-          h('div', { className: 'social-post-meta' },
-            h('span', { className: `social-platform social-platform-${post.platform}` }, this.getPlatformIcon(post.platform)),
-            h('span', { className: 'social-source' }, escapeHtml(post.source)),
-            h('span', { className: 'social-time' }, this.formatRelativeTime(post.timestamp)),
-          ),
-          h('a', {
-            className: 'social-post-title',
-            href: post.link,
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }, escapeHtml(post.title)),
-          h('div', { className: 'social-post-badges' },
-          ),
-        );
-        // Inject side badge as raw HTML
-        const badgeEl = row.querySelector('.social-post-badges');
-        if (badgeEl) badgeEl.innerHTML = this.getSideBadge(post.side);
-        return row;
-      }),
-    );
-
-    const content = h('div', { className: 'social-pulse-content' },
-      tabBar,
-      sentimentBar,
-      postList,
-    );
-
-    replaceChildren(this.content, content);
-  }
-
-  private createTab(filter: TabFilter, label: string): HTMLElement {
-    const tab = h('button', {
-      className: `social-tab ${this.activeTab === filter ? 'social-tab-active' : ''}`,
-    }, label);
-    tab.addEventListener('click', () => {
-      this.activeTab = filter;
-      this.render();
-    });
-    return tab;
   }
 }

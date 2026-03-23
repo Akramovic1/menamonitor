@@ -1,5 +1,6 @@
 import type { Hotspot, ConflictZone, MilitaryBase, UnderseaCable, NuclearFacility, StrategicWaterway, EconomicCenter, Spaceport, CriticalMineralProject } from '@/types';
 import { MILITARY_BASES_EXPANDED } from './bases-expanded';
+import { SITE_VARIANT } from './variant';
 
 // Hotspot levels are NOT hardcoded - they are dynamically calculated based on news activity
 // All hotspots start at 'low' and rise to 'elevated' or 'high' based on matching news items
@@ -764,6 +765,27 @@ export const CONFLICT_ZONES: ConflictZone[] = [
     keyDevelopments: ['Pakistan cross-border strikes in Afghanistan', 'TTP attacks in KPK', 'Torkham/Chaman crossing tensions', 'Militant infiltration', 'Border closures'],
   },
 ];
+
+/** MENA bounding box for filtering geo data */
+function isInMenaBounds(lat: number, lon: number): boolean {
+  return lat >= 10 && lat <= 45 && lon >= 20 && lon <= 75;
+}
+
+/** Variant-filtered hotspots: MENA variant shows only MENA-region hotspots */
+export const VARIANT_HOTSPOTS: Hotspot[] = SITE_VARIANT === 'mena'
+  ? INTEL_HOTSPOTS.filter(h => isInMenaBounds(h.lat, h.lon))
+  : INTEL_HOTSPOTS;
+
+/** Variant-filtered conflict zones: MENA variant shows only MENA-region zones */
+export const VARIANT_CONFLICT_ZONES: ConflictZone[] = SITE_VARIANT === 'mena'
+  ? CONFLICT_ZONES.filter(z => {
+      const lats = z.coords.map(c => c[1]);
+      const lons = z.coords.map(c => c[0]);
+      const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+      const centerLon = (Math.min(...lons) + Math.max(...lons)) / 2;
+      return isInMenaBounds(centerLat, centerLon);
+    })
+  : CONFLICT_ZONES;
 
 // US Domestic bases (not in overseas dataset - these are CONUS bases)
 const US_DOMESTIC_BASES: MilitaryBase[] = [

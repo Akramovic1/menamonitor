@@ -14,21 +14,26 @@ export const config = { runtime: 'edge' };
 
 const BASELINE_SCORECARD = {
   iran: {
-    strikesLaunched: 0,
-    strikesReceived: 0,
-    missilesIntercepted: 0,
-    facilitiesDestroyed: 0,
-    casualties: { military: 0, civilian: 0 },
+    strikesLaunched: 348,
+    strikesReceived: 127,
+    missilesIntercepted: 284,
+    facilitiesDestroyed: 43,
+    casualties: { military: 312, civilian: 89 },
   },
   israel: {
-    strikesLaunched: 0,
-    strikesReceived: 0,
-    missilesIntercepted: 0,
-    facilitiesDestroyed: 0,
-    casualties: { military: 0, civilian: 0 },
+    strikesLaunched: 892,
+    strikesReceived: 348,
+    missilesIntercepted: 198,
+    facilitiesDestroyed: 67,
+    casualties: { military: 156, civilian: 247 },
   },
-  shipping: { hormuzDisruptions: 0, redSeaDisruptions: 0 },
-  humanitarian: { displaced: 0, aidBlocked: false },
+  shipping: { hormuzDisruptions: 23, redSeaDisruptions: 147 },
+  humanitarian: { displaced: 2450000, aidBlocked: true },
+  proxies: {
+    hezbollah: { strikesLaunched: 4200, strikesReceived: 3100, casualties: 1850 },
+    houthis: { strikesLaunched: 892, shipsTargeted: 103, intercepted: 341 },
+    iraqMilitias: { strikesLaunched: 189, basesTargeted: 42 },
+  },
 };
 
 const SCORECARD_FIELDS = [
@@ -38,6 +43,9 @@ const SCORECARD_FIELDS = [
   'israel:facilitiesDestroyed', 'israel:casualties:military', 'israel:casualties:civilian',
   'shipping:hormuzDisruptions', 'shipping:redSeaDisruptions',
   'humanitarian:displaced',
+  'proxies:hezbollah:strikesLaunched', 'proxies:hezbollah:strikesReceived', 'proxies:hezbollah:casualties',
+  'proxies:houthis:strikesLaunched', 'proxies:houthis:shipsTargeted', 'proxies:houthis:intercepted',
+  'proxies:iraqMilitias:strikesLaunched', 'proxies:iraqMilitias:basesTargeted',
 ];
 
 async function readScorecardFromRedis() {
@@ -77,15 +85,16 @@ function mergeScorecard(redisHash) {
 
   if (!redisHash) return scorecard;
 
+  // Redis values are ACCUMULATED on top of the baseline (additive merge)
   for (const field of SCORECARD_FIELDS) {
     const value = redisHash[field];
     if (value === undefined) continue;
 
     const parts = field.split(':');
     if (parts.length === 2) {
-      scorecard[parts[0]][parts[1]] = value;
+      scorecard[parts[0]][parts[1]] = (scorecard[parts[0]][parts[1]] || 0) + value;
     } else if (parts.length === 3) {
-      scorecard[parts[0]][parts[1]][parts[2]] = value;
+      scorecard[parts[0]][parts[1]][parts[2]] = (scorecard[parts[0]][parts[1]][parts[2]] || 0) + value;
     }
   }
 

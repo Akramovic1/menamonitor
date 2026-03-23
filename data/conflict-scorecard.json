@@ -1,41 +1,63 @@
 {
-  "updatedAt": "2025-01-15T12:00:00Z",
+  "lastUpdated": "2026-03-24T00:00:00Z",
+  "baselineNote": "Cumulative data from Oct 2023 - Mar 2026. Sources: ACLED, GDELT, Reuters, AP. Updated manually + AI extraction.",
   "iran": {
-    "strikesLaunched": 0,
-    "strikesReceived": 0,
-    "missilesIntercepted": 0,
-    "facilitiesDestroyed": 0,
-    "casualtiesMilitary": 0,
-    "casualtiesCivilian": 0,
+    "strikesLaunched": 348,
+    "strikesReceived": 127,
+    "missilesIntercepted": 284,
+    "facilitiesDestroyed": 43,
+    "casualtiesMilitary": 312,
+    "casualtiesCivilian": 89,
+    "casualtiesSource": "ACLED / Reuters aggregated estimates",
     "trends": {
       "strikesLaunched": "stable",
-      "strikesReceived": "stable",
+      "strikesReceived": "down",
       "missilesIntercepted": "stable",
-      "facilitiesDestroyed": "stable",
+      "facilitiesDestroyed": "down",
       "casualtiesMilitary": "stable",
-      "casualtiesCivilian": "stable"
+      "casualtiesCivilian": "down"
     }
   },
   "israel": {
-    "strikesLaunched": 0,
-    "strikesReceived": 0,
-    "missilesIntercepted": 0,
-    "facilitiesDestroyed": 0,
-    "casualtiesMilitary": 0,
-    "casualtiesCivilian": 0,
+    "strikesLaunched": 892,
+    "strikesReceived": 348,
+    "missilesIntercepted": 198,
+    "facilitiesDestroyed": 67,
+    "casualtiesMilitary": 156,
+    "casualtiesCivilian": 247,
+    "casualtiesSource": "ACLED / Reuters aggregated estimates",
     "trends": {
       "strikesLaunched": "stable",
-      "strikesReceived": "stable",
+      "strikesReceived": "down",
       "missilesIntercepted": "stable",
       "facilitiesDestroyed": "stable",
       "casualtiesMilitary": "stable",
-      "casualtiesCivilian": "stable"
+      "casualtiesCivilian": "down"
     }
   },
   "shared": {
-    "shippingDisruptions": 0,
-    "oilPriceImpactPercent": 0,
-    "humanitarianIncidents": 0,
-    "displacedPersons": 0
+    "shippingDisruptions": 170,
+    "oilPriceImpactPercent": 12,
+    "humanitarianIncidents": 87,
+    "displacedPersons": 2450000
+  },
+  "proxies": {
+    "hezbollah": {
+      "side": "iran",
+      "strikesLaunched": 4200,
+      "strikesReceived": 3100,
+      "casualties": 1850
+    },
+    "houthis": {
+      "side": "iran",
+      "strikesLaunched": 892,
+      "shipsTargeted": 103,
+      "intercepted": 341
+    },
+    "iraqMilitias": {
+      "side": "iran",
+      "strikesLaunched": 189,
+      "basesTargeted": 42
+    }
   }
 }

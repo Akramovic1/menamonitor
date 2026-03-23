@@ -1,11 +1,31 @@
 import { Panel } from './Panel';
 import { h, replaceChildren } from '@/utils/dom-utils';
 import { t } from '@/services/i18n';
-import { SOURCE_SIDES, getSourcePropagandaRisk, getSourceTier } from '@/config/feeds';
+import { getSourceSide, getSourcePropagandaRisk, getSourceTier } from '@/config/feeds';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
 import type { NewsItem } from '@/types';
 
 type Side = 'iran' | 'neutral' | 'israel';
+
+const MENA_KEYWORDS = [
+  'iran', 'israel', 'gaza', 'hamas', 'hezbollah', 'houthi', 'yemen',
+  'hormuz', 'tehran', 'tel aviv', 'jerusalem', 'beirut', 'syria',
+  'iraq', 'saudi', 'gulf', 'middle east', 'mena', 'idf', 'irgc',
+  'missile', 'strike', 'nuclear', 'sanctions', 'red sea', 'suez',
+  'lebanon', 'netanyahu', 'khamenei', 'drone', 'ceasefire', 'escalat',
+  'west bank', 'rafah', 'houthis', 'nasrallah', 'quds', 'palestinian',
+  'zionist', 'ayatollah', 'kurdish', 'peshmerga', 'tikrit', 'mosul',
+];
+
+function isMenaRelevant(article: NewsItem): boolean {
+  // Articles from Iran/Israel sources are always relevant
+  const side = getSourceSide(article.source);
+  if (side !== 'neutral') return true;
+
+  // For neutral sources, check headline for MENA keywords
+  const text = (article.title + ' ' + article.source).toLowerCase();
+  return MENA_KEYWORDS.some(kw => text.includes(kw));
+}
 
 export class TwoSidedNewsPanel extends Panel {
   private articles: NewsItem[] = [];
@@ -30,7 +50,7 @@ export class TwoSidedNewsPanel extends Panel {
   }
 
   private classifyArticle(item: NewsItem): Side {
-    return SOURCE_SIDES[item.source] || 'neutral';
+    return getSourceSide(item.source);
   }
 
   private propagandaRiskDot(source: string): HTMLElement {
@@ -123,8 +143,9 @@ export class TwoSidedNewsPanel extends Panel {
   }
 
   private render(): void {
+    const menaArticles = this.articles.filter(isMenaRelevant);
     const grouped: Record<Side, NewsItem[]> = { iran: [], neutral: [], israel: [] };
-    for (const a of this.articles) {
+    for (const a of menaArticles) {
       const side = this.classifyArticle(a);
       grouped[side].push(a);
     }
@@ -134,7 +155,7 @@ export class TwoSidedNewsPanel extends Panel {
     }
 
     this.setErrorState(false);
-    const total = this.articles.length;
+    const total = menaArticles.length;
     this.setCount(total);
 
     if (total === 0) {

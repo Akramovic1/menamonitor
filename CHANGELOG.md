@@ -6,6 +6,11 @@ All notable changes to World Monitor are documented here.
 
 ### Added
 
+- Arabic news priority: reordered middleeast RSS feeds — Arabic-language feeds (Al Jazeera, Al Arabiya, Asharq, BBC Arabic, Sky News Arabia) now load first
+- 5 new Arabic feeds: BBC Arabic, Sky News Arabia, RT Arabic, France 24 Arabic, DW Arabic with proper lang:'ar' tags
+- Default live stream changed to Al Jazeera Arabic for MENA variant (was Al Jazeera English)
+- New sources added to SOURCE_TIERS, SOURCE_SIDES (neutral), and propaganda risk profiles
+- arabic.rt.com added to RSS proxy allowed domains
 - AiAnalysisPanel: AI-generated neutral conflict analysis with risk assessment, key developments, social mood summary, and auto-refresh every 30 minutes
 - /api/ai-analysis.js: Vercel Edge Function endpoint for Groq-powered conflict situation analysis with Redis caching (30min TTL)
 - Service health diagnostic: console.table output on init showing API endpoint status for MENA variant

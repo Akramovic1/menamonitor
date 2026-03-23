@@ -314,5 +314,6 @@ export default [
   "www.radiofarda.com",
   "reddit.com",
   "www.reddit.com",
-  "nitter.privacydev.net"
+  "nitter.privacydev.net",
+  "arabic.rt.com"
 ];

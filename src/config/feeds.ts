@@ -357,13 +357,14 @@ export const SOURCE_TYPES: Record<string, SourceType> = {
   'CrisisWatch': 'intel',
   'CSIS': 'intel', 'RAND': 'intel', 'Brookings': 'intel', 'Carnegie': 'intel',
   'IAEA': 'gov', 'WHO': 'gov', 'UNHCR': 'gov',
-  'Xinhua': 'wire', 'TASS': 'wire', 'RT': 'wire', 'RT Russia': 'wire',
+  'Xinhua': 'wire', 'TASS': 'wire', 'RT': 'wire', 'RT Russia': 'wire', 'RT Arabic': 'wire',
   'NHK World': 'mainstream', 'Nikkei Asia': 'market',
 
   // Mainstream outlets
   'BBC World': 'mainstream', 'BBC Middle East': 'mainstream',
   'Guardian World': 'mainstream', 'Guardian ME': 'mainstream',
-  'NPR News': 'mainstream', 'Al Jazeera': 'mainstream',
+  'NPR News': 'mainstream', 'Al Jazeera': 'mainstream', 'BBC Arabic': 'mainstream',
+  'Sky News Arabia': 'mainstream', 'France 24 Arabic': 'mainstream', 'DW Arabic': 'mainstream',
   'CNN World': 'mainstream', 'Politico': 'mainstream', 'Axios': 'mainstream',
   'EuroNews': 'mainstream', 'France 24': 'mainstream', 'Le Monde': 'mainstream',
   // European Addition
@@ -439,6 +440,7 @@ export const SOURCE_PROPAGANDA_RISK: Record<string, SourceRiskProfile> = {
   'TASS': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state news agency' },
   'RT': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media, banned in EU' },
   'RT Russia': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media, Russia desk' },
+  'RT Arabic': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media Arabic service' },
   'Sputnik': { risk: 'high', stateAffiliated: 'Russia', note: 'Russian state media' },
   'CGTN': { risk: 'high', stateAffiliated: 'China', note: 'Chinese state broadcaster' },
   'Press TV': { risk: 'high', stateAffiliated: 'Iran', note: 'Iranian state English-language media' },
@@ -454,6 +456,9 @@ export const SOURCE_PROPAGANDA_RISK: Record<string, SourceRiskProfile> = {
   'EuroNews': { risk: 'low', note: 'European public broadcaster consortium', knownBiases: ['Pro-EU'] },
   'Le Monde': { risk: 'low', note: 'French newspaper of record' },
   'DW News': { risk: 'medium', stateAffiliated: 'Germany', note: 'German state-funded, editorially independent' },
+  'DW Arabic': { risk: 'medium', stateAffiliated: 'Germany', note: 'German state-funded Arabic service' },
+  'France 24 Arabic': { risk: 'medium', stateAffiliated: 'France', note: 'French state-funded Arabic service' },
+  'Sky News Arabia': { risk: 'medium', stateAffiliated: 'UAE/UK', note: 'Abu Dhabi-owned, Sky News partnership' },
   'Voice of America': { risk: 'medium', stateAffiliated: 'USA', note: 'US government-funded' },
   'ISNA': { risk: 'medium', note: 'Semi-independent Iranian students agency' },
   'Tehran Times': { risk: 'medium', stateAffiliated: 'Iran', note: 'State-affiliated English daily' },
@@ -503,6 +508,36 @@ export const SOURCE_SIDES: Record<string, 'iran' | 'israel' | 'neutral'> = {
   'BBC Arabic': 'neutral', 'Sky News Arabia': 'neutral', 'RT Arabic': 'neutral',
   'France 24 Arabic': 'neutral', 'DW Arabic': 'neutral',
 };
+
+/**
+ * Resolve a source name to its side classification with fuzzy matching.
+ * Handles cases where the RSS feed source name doesn't exactly match SOURCE_SIDES keys.
+ */
+export function getSourceSide(sourceName: string): 'iran' | 'israel' | 'neutral' {
+  // Exact match first
+  const exact = SOURCE_SIDES[sourceName];
+  if (exact) return exact;
+
+  // Partial match — source name might have suffix or slight variation
+  const lower = sourceName.toLowerCase();
+  for (const [key, side] of Object.entries(SOURCE_SIDES)) {
+    if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
+      return side;
+    }
+  }
+
+  // Keyword-based fallback for Iran-side sources
+  if (lower.includes('iran') || lower.includes('tehran') || lower.includes('fars') ||
+      lower.includes('tasnim') || lower.includes('press tv') || lower.includes('isna') ||
+      lower.includes('irna')) return 'iran';
+
+  // Keyword-based fallback for Israel-side sources
+  if (lower.includes('israel') || lower.includes('haaretz') || lower.includes('ynet') ||
+      lower.includes('jpost') || lower.includes('jerusalem post') || lower.includes('i24') ||
+      lower.includes('arutz')) return 'israel';
+
+  return 'neutral';
+}
 
 let _sourcePanelMap: Map<string, string> | null = null;
 export function getSourcePanelId(sourceName: string): string {
