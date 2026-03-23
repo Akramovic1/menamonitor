@@ -170,6 +170,9 @@ const MAP_INTERACTION_MODE: MapInteractionMode =
 const HAPPY_DARK_STYLE = '/map-styles/happy-dark.json';
 const HAPPY_LIGHT_STYLE = '/map-styles/happy-light.json';
 const isHappyVariant = SITE_VARIANT === 'happy';
+const isMenaVariant = SITE_VARIANT === 'mena';
+const MENA_MAP_BOUNDS: [[number, number], [number, number]] | undefined = isMenaVariant ? [[20, 10], [75, 45]] : undefined;
+const MENA_MIN_ZOOM = isMenaVariant ? 3 : undefined;
 
 // Zoom thresholds for layer visibility and labels (matches old Map.ts)
 // Zoom-dependent layer visibility and labels
@@ -684,6 +687,8 @@ export class DeckGLMap {
       renderWorldCopies: false,
       attributionControl: false,
       interactive: true,
+      ...(MENA_MAP_BOUNDS ? { maxBounds: MENA_MAP_BOUNDS } : {}),
+      ...(MENA_MIN_ZOOM != null ? { minZoom: MENA_MIN_ZOOM } : {}),
       ...(MAP_INTERACTION_MODE === 'flat'
         ? {
           maxPitch: 0,
@@ -712,6 +717,8 @@ export class DeckGLMap {
         renderWorldCopies: false,
         attributionControl: false,
         interactive: true,
+        ...(MENA_MAP_BOUNDS ? { maxBounds: MENA_MAP_BOUNDS } : {}),
+        ...(MENA_MIN_ZOOM != null ? { minZoom: MENA_MIN_ZOOM } : {}),
         ...(MAP_INTERACTION_MODE === 'flat'
           ? {
             maxPitch: 0,
@@ -4104,7 +4111,7 @@ export class DeckGLMap {
         <button class="map-btn zoom-out" title="${t('components.deckgl.zoomOut')}">-</button>
         <button class="map-btn zoom-reset" title="${t('components.deckgl.resetView')}">&#8962;</button>
       </div>
-      <div class="view-selector">
+      <div class="view-selector"${isMenaVariant ? ' style="display:none"' : ''}>
         <select class="view-select">
           <option value="global">${t('components.deckgl.views.global')}</option>
           <option value="america">${t('components.deckgl.views.americas')}</option>
@@ -4202,10 +4209,12 @@ export class DeckGLMap {
       </div>
     `;
 
-    const authorBadge = document.createElement('div');
-    authorBadge.className = 'map-author-badge';
-    authorBadge.textContent = '© Elie Habib · Someone™';
-    toggles.appendChild(authorBadge);
+    if (!isMenaVariant) {
+      const authorBadge = document.createElement('div');
+      authorBadge.className = 'map-author-badge';
+      authorBadge.textContent = '© Elie Habib · Someone™';
+      toggles.appendChild(authorBadge);
+    }
 
     this.container.appendChild(toggles);
 

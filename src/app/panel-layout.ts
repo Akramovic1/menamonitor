@@ -178,7 +178,7 @@ export class PanelLayoutManager implements AppModule {
             <span class="status-dot"></span>
             <span>${t('header.live')}</span>
           </div>
-          <div class="region-selector">
+          <div class="region-selector"${SITE_VARIANT === 'mena' ? ' style="display:none"' : ''}>
             <select id="regionSelect" class="region-select">
               <option value="global">${t('components.deckgl.views.global')}</option>
               <option value="america">${t('components.deckgl.views.americas')}</option>
