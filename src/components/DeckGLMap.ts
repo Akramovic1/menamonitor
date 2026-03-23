@@ -59,8 +59,10 @@ import { t } from '@/services/i18n';
 import { debounce, rafSchedule, getCurrentTheme } from '@/utils/index';
 import { showLayerWarning } from '@/utils/layer-warning';
 import { localizeMapLabels } from '@/utils/map-locale';
-import { VARIANT_HOTSPOTS, VARIANT_CONFLICT_ZONES } from '@/config/geo';
 import {
+  INTEL_HOTSPOTS,
+  CONFLICT_ZONES,
+
   MILITARY_BASES,
   UNDERSEA_CABLES,
   NUCLEAR_FACILITIES,
@@ -71,22 +73,24 @@ import {
   ECONOMIC_CENTERS,
   AI_DATA_CENTERS,
   SITE_VARIANT,
-  STARTUP_HUBS,
-  ACCELERATORS,
-  TECH_HQS,
-  CLOUD_REGIONS,
   PORTS,
   SPACEPORTS,
   CRITICAL_MINERALS,
-  STOCK_EXCHANGES,
-  FINANCIAL_CENTERS,
-  CENTRAL_BANKS,
-  COMMODITY_HUBS,
   GULF_INVESTMENTS,
-  MINING_SITES,
-  PROCESSING_PLANTS,
-  COMMODITY_PORTS as COMMODITY_GEO_PORTS,
 } from '@/config';
+
+// Stubs for removed variant-specific config data (tech/finance/commodity)
+const STARTUP_HUBS: any[] = [];
+const ACCELERATORS: any[] = [];
+const TECH_HQS: any[] = [];
+const CLOUD_REGIONS: any[] = [];
+const STOCK_EXCHANGES: any[] = [];
+const FINANCIAL_CENTERS: any[] = [];
+const CENTRAL_BANKS: any[] = [];
+const COMMODITY_HUBS: any[] = [];
+const MINING_SITES: any[] = [];
+const PROCESSING_PLANTS: any[] = [];
+const COMMODITY_GEO_PORTS: any[] = [];
 import type { GulfInvestment } from '@/types';
 import { resolveTradeRouteSegments, TRADE_ROUTES as TRADE_ROUTES_LIST, type TradeRouteSegment } from '@/config/trade-routes';
 import { getLayersForVariant, resolveLayerLabel, bindLayerSearch, type MapVariant } from '@/config/map-layer-definitions';
@@ -168,13 +172,6 @@ const MAP_INTERACTION_MODE: MapInteractionMode =
 const HAPPY_DARK_STYLE = '/map-styles/happy-dark.json';
 const HAPPY_LIGHT_STYLE = '/map-styles/happy-light.json';
 const isHappyVariant = SITE_VARIANT === 'happy';
-const isMenaVariant = SITE_VARIANT === 'mena';
-
-/** MENA variant map constraints */
-const MENA_MAP_BOUNDS: [[number, number], [number, number]] | undefined = isMenaVariant
-  ? [[20, 10], [75, 45]]
-  : undefined;
-const MENA_MIN_ZOOM = isMenaVariant ? 3 : undefined;
 
 // Zoom thresholds for layer visibility and labels (matches old Map.ts)
 // Zoom-dependent layer visibility and labels
@@ -492,7 +489,7 @@ export class DeckGLMap {
       pan: { ...initialState.pan },
       layers: { ...initialState.layers },
     };
-    this.hotspots = [...VARIANT_HOTSPOTS];
+    this.hotspots = [...INTEL_HOTSPOTS];
 
     this.debouncedRebuildLayers = debounce(() => {
       if (this.renderPaused || this.webglLost || !this.maplibreMap) return;
@@ -689,8 +686,6 @@ export class DeckGLMap {
       renderWorldCopies: false,
       attributionControl: false,
       interactive: true,
-      ...(MENA_MAP_BOUNDS ? { maxBounds: MENA_MAP_BOUNDS } : {}),
-      ...(MENA_MIN_ZOOM != null ? { minZoom: MENA_MIN_ZOOM } : {}),
       ...(MAP_INTERACTION_MODE === 'flat'
         ? {
           maxPitch: 0,
@@ -719,8 +714,6 @@ export class DeckGLMap {
         renderWorldCopies: false,
         attributionControl: false,
         interactive: true,
-        ...(MENA_MAP_BOUNDS ? { maxBounds: MENA_MAP_BOUNDS } : {}),
-        ...(MENA_MIN_ZOOM != null ? { minZoom: MENA_MIN_ZOOM } : {}),
         ...(MAP_INTERACTION_MODE === 'flat'
           ? {
             maxPitch: 0,
@@ -1242,7 +1235,7 @@ export class DeckGLMap {
             _clusterId: f.properties.cluster_id!,
             lat: coords[1], lon: coords[0],
             count: clusterCount,
-            items: [] as import('@/config/tech-geo').TechHQ[],
+            items: [] as any[],
             city: String(props.city ?? ''),
             country: String(props.country ?? ''),
             primaryType,
@@ -1791,7 +1784,7 @@ export class DeckGLMap {
 
     const features: GeoJSON.Feature[] = [];
 
-    for (const zone of VARIANT_CONFLICT_ZONES) {
+    for (const zone of CONFLICT_ZONES) {
       const isoCodes = CONFLICT_COUNTRY_ISO[zone.id];
       let usedCountryGeometry = false;
 
@@ -3986,7 +3979,7 @@ export class DeckGLMap {
     if (layerId === 'conflict-zones-layer' && info.object.properties) {
       // Find the full conflict zone data from config
       const conflictId = info.object.properties.id;
-      const fullConflict = VARIANT_CONFLICT_ZONES.find(c => c.id === conflictId);
+      const fullConflict = CONFLICT_ZONES.find(c => c.id === conflictId);
       if (fullConflict) data = fullConflict;
     }
 
@@ -4113,7 +4106,7 @@ export class DeckGLMap {
         <button class="map-btn zoom-out" title="${t('components.deckgl.zoomOut')}">-</button>
         <button class="map-btn zoom-reset" title="${t('components.deckgl.resetView')}">&#8962;</button>
       </div>
-      ${isMenaVariant ? '' : `<div class="view-selector">
+      ${SITE_VARIANT === 'mena' ? '' : `<div class="view-selector">
         <select class="view-select">
           <option value="global">${t('components.deckgl.views.global')}</option>
           <option value="america">${t('components.deckgl.views.americas')}</option>
@@ -4211,10 +4204,12 @@ export class DeckGLMap {
       </div>
     `;
 
-    const authorBadge = document.createElement('div');
-    authorBadge.className = 'map-author-badge';
-    authorBadge.textContent = '© Elie Habib · Someone™';
-    toggles.appendChild(authorBadge);
+    if (SITE_VARIANT !== 'mena') {
+      const authorBadge = document.createElement('div');
+      authorBadge.className = 'map-author-badge';
+      authorBadge.textContent = '© Elie Habib · Someone™';
+      toggles.appendChild(authorBadge);
+    }
 
     this.container.appendChild(toggles);
 
@@ -5395,7 +5390,7 @@ export class DeckGLMap {
   }
 
   public triggerConflictClick(id: string): void {
-    const conflict = VARIANT_CONFLICT_ZONES.find(c => c.id === id);
+    const conflict = CONFLICT_ZONES.find(c => c.id === id);
     if (conflict) {
       // Don't pan - show popup at projected screen position or center
       const screenPos = this.projectToScreen(conflict.center[1], conflict.center[0]);
